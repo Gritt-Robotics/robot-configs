@@ -1,0 +1,5 @@
+drs:
+  ros__parameters:
+    longitudinal_tol_limits_m: [0.0, 0.90]  # Tolerance limits for longitudinal (along the tracker) distance of the last panel from the base link
+    lateral_tol_limits_m: [1.60, 2.20]  # Tolerance limits for lateral distance of the last panel from the base link
+    base_from_vehicle_yaw_rad: 0.0  # Yaw of the vehicle (longitudinal/lateral) frame about base +Z; 0.0 means longitudinal is base +X and lateral is base +Y

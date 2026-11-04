@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "zedboxes": {
+    "zedbox_1": {
+      "address": "192.168.1.156"
+    }
+  },
+  "cameras": {
+    "pick": {
+      "serial_number": 49255441,
+      "camera_model": "zedx",
+      "zedbox": "zedbox_1",
+      "stream_port": 30000,
+      "overrides": {}
+    },
+    "place": {
+      "serial_number": 44425534,
+      "camera_model": "zedx",
+      "zedbox": "zedbox_1",
+      "stream_port": 30002,
+      "overrides": {}
+    },
+    "person_scene": {
+      "serial_number": 43087777,
+      "camera_model": "zedx",
+      "zedbox": "zedbox_1",
+      "stream_port": 30004,
+      "overrides": {}
+    },
+    "front_scene": {
+      "serial_number": 48136763,
+      "camera_model": "zedx",
+      "zedbox": "zedbox_1",
+      "stream_port": 30006,
+      "overrides": {}
+    }
+  }
+}

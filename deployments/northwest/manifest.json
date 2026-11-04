@@ -1,0 +1,15 @@
+{
+  "kind": "deployment",
+  "name": "northwest",
+  "schema_version": 1,
+  "parent_rev": null,
+  "source": "cloud",
+  "author": "sjudson@gritt.ai",
+  "created_at": "2026-11-04T01:37:56.297246Z",
+  "files": {
+    "install_direction.yaml": "1030bfac7ed27e286eb80171c8f9bc121d35fc5be80287a68ce0dd8550e5ebbb",
+    "install_direction_legacy.yaml": "b343bf68f61fb138728af4b2b7a16a179b1b6f1ab1183d422e66624813672def",
+    "object_models.yaml": "e3a0c575bd2abc9699bb6eca5143d95c540baa7cba9b6a849093d7ee4493f2fc",
+    "tracker_gap.yaml": "221c28c4a4b467d952ca328a98b0171cc2a601fdb7f07906229b0643d9e0fcaf"
+  }
+}

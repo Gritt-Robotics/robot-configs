@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "zedboxes": {
+    "zedbox_1": {
+      "address": "192.168.1.156"
+    },
+    "zedbox_2": {
+      "address": "192.168.1.157"
+    }
+  },
+  "cameras": {
+    "pick": {
+      "serial_number": 43838266,
+      "camera_model": "zedx",
+      "zedbox": "zedbox_2",
+      "stream_port": 30000,
+      "overrides": {
+        "publish_raw": true
+      }
+    },
+    "place": {
+      "serial_number": 47728835,
+      "camera_model": "zedx",
+      "zedbox": "zedbox_1",
+      "stream_port": 30000,
+      "overrides": {
+        "publish_raw": true
+      }
+    },
+    "place_left": {
+      "serial_number": 49302125,
+      "camera_model": "zedx",
+      "zedbox": "zedbox_2",
+      "stream_port": 30002,
+      "overrides": {}
+    },
+    "person_scene": {
+      "serial_number": 43632966,
+      "camera_model": "zedx",
+      "zedbox": "zedbox_1",
+      "stream_port": 30002,
+      "overrides": {}
+    },
+    "front_right_scene": {
+      "serial_number": 44430871,
+      "camera_model": "zedx",
+      "zedbox": "zedbox_1",
+      "stream_port": 30004,
+      "overrides": {}
+    },
+    "front_scene": {
+      "serial_number": 49691294,
+      "camera_model": "zedx",
+      "zedbox": "zedbox_2",
+      "stream_port": 30004,
+      "overrides": {}
+    },
+    "person_scene_left": {
+      "serial_number": 42490366,
+      "camera_model": "zedx",
+      "zedbox": "zedbox_1",
+      "stream_port": 30006,
+      "overrides": {}
+    },
+    "front_left_scene": {
+      "serial_number": 45471112,
+      "camera_model": "zedx",
+      "zedbox": "zedbox_2",
+      "stream_port": 30006,
+      "overrides": {}
+    }
+  }
+}

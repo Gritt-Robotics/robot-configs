@@ -1,0 +1,7 @@
+/**:
+  ros__parameters:
+    panel_model: ja_solar_jam66d45lb
+    purlin_model: ati
+    purlin_tracker_gap_model: circular
+    long_purlin_model: ati_long_1400mm
+    bha_panel_model: pvh

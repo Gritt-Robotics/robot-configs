@@ -1,0 +1,23 @@
+{
+  "kind": "robot",
+  "name": "nectarine",
+  "schema_version": 1,
+  "parent_rev": null,
+  "source": "cloud",
+  "author": "sjudson@gritt.ai",
+  "created_at": "2026-11-04T01:37:56.297246Z",
+  "files": {
+    "calibration/autocalib_pick_lidar_calib_launch_nectarine.py": "cf198878694d4c23caa972013890632cdf1409b958f1fbe11aa01cd649184f75",
+    "calibration/autocalib_pick_zed_calib_launch_nectarine.py": "fe43327e4008f0d1156ff3711600a3c7d6279bae0cf6fe7350ed58dbda076d3c",
+    "calibration/autocalib_place_lidar_calib_launch_nectarine.py": "2fa876494811d991cb97b3daaa6de5b641957bd21ae99da2b73decade856a1f1",
+    "calibration/autocalib_place_zed_calib_launch_nectarine.py": "42a868f803b7a5f935d92e10ba50b3083b3ae251273723285a15c8816b28832d",
+    "calibration_setup/pick_calibration_waypoints.yaml": "a87136902260b608ca5bdda004406454ad2fb794e3617877b1233ec6832ee9f6",
+    "calibration_setup/pick_marker_description.yaml": "0d58cab067397a0d22e3752c5a8e789e2a905af9af282007ba8c5c3e96704204",
+    "calibration_setup/place_calibration_waypoints.yaml": "9c3a71b7d6d9739966d97f6b9b30eb87f28eb451e569d473bb1922552cbf4cf0",
+    "calibration_setup/place_marker_description.yaml": "0d58cab067397a0d22e3752c5a8e789e2a905af9af282007ba8c5c3e96704204",
+    "calibration_setup/target_rectangle_dimensions.yaml": "8b96819edab486fc8ead25b5441e60237f552cb9cf695fbd9a923f80ac96312a",
+    "planner_offset_limits.yaml": "6be9f5627d89c5b689af19096bbe8960ce07b131302a66c20b70e2b33a5e1c61",
+    "reachability_tolerance_limits.yaml": "0d682c611155c5292c323efc0c685465fa60681e1699d381423356cc0ab9c0b9",
+    "zed.json": "836ef0f7943f940b160715e45d0c1bf93fed5187a9e370347d843868f1bd3d7d"
+  }
+}

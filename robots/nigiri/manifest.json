@@ -1,0 +1,23 @@
+{
+  "kind": "robot",
+  "name": "nigiri",
+  "schema_version": 1,
+  "parent_rev": null,
+  "source": "cloud",
+  "author": "sjudson@gritt.ai",
+  "created_at": "2026-11-04T01:37:56.297246Z",
+  "files": {
+    "calibration/autocalib_pick_lidar_calib_launch_nigiri.py": "c621d6a0df8388452016bc97167738dcb910d4cffa40b75d7a34df8ec792c45d",
+    "calibration/autocalib_pick_zed_calib_launch_nigiri.py": "048b0a45ba347164bccb44c09126b1ec5d2b24b25fcc831015d845a5033f6f0f",
+    "calibration/autocalib_place_lidar_calib_launch_nigiri.py": "ae97ca74e591822db6182a9e90936024d5048a1ef33d56c55700f3e588db607a",
+    "calibration/autocalib_place_zed_calib_launch_nigiri.py": "722af684cac71f30a35b925ddd982ce37360b8948834f7d7bd15878357742bd8",
+    "calibration_setup/pick_calibration_waypoints.yaml": "cdfa17bf820a66597ba7638ff0ffea1c3ea489e22897710890c2d6879c539ed3",
+    "calibration_setup/pick_marker_description.yaml": "f22cf81026dd5e6d020a32df209dd18e8526eb2eb74991c292d5b35432a16e49",
+    "calibration_setup/place_calibration_waypoints.yaml": "cc9fa0fca1033e57f379a49acbb6837613cf69115dbe536e9bbabc6b60581b70",
+    "calibration_setup/place_marker_description.yaml": "f22cf81026dd5e6d020a32df209dd18e8526eb2eb74991c292d5b35432a16e49",
+    "calibration_setup/target_rectangle_dimensions.yaml": "2849afa6ea265838418ed2aa1cacd4701b59529af3a55f769307d94fdbb99bcd",
+    "planner_offset_limits.yaml": "3c08fc947ceca7bd10faebc8e75b4345135798a13c406edf83073ac5421c2cbf",
+    "reachability_tolerance_limits.yaml": "54431002c3f5b997bcade9c175245995755464536f0aa3e8cac4b3257d10e4d0",
+    "zed.json": "d1e16cedd07ae11bbf3b559ea4f38929b35de49ec6adea3d21f8db632ed23dda"
+  }
+}

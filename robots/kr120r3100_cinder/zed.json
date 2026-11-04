@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "zedboxes": {
+    "zedbox_1": {
+      "address": "192.168.1.156"
+    }
+  },
+  "cameras": {
+    "pick": {
+      "serial_number": 30632650,
+      "camera_model": "zed2i",
+      "zedbox": "zedbox_1",
+      "stream_port": 30000,
+      "overrides": {
+        "grab_resolution": "HD2K"
+      }
+    }
+  }
+}

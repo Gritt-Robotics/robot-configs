@@ -1,0 +1,52 @@
+name: Publish bundles
+
+on:
+  push:
+    branches: [main]
+
+# Publishing is idempotent, but runs must not interleave.
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish revisions to GCS
+    runs-on: self-hosted
+    permissions:
+      contents: read
+    timeout-minutes: 45
+
+    steps:
+      - name: Reclaim workspace
+        run: |
+          WORKSPACE_DIR="${GITHUB_WORKSPACE:-$PWD}"
+          if [ -n "$WORKSPACE_DIR" ] && [ "$WORKSPACE_DIR" != "/" ]; then
+            sudo rm -rf "$WORKSPACE_DIR" || true
+            mkdir -p "$WORKSPACE_DIR"
+            sudo chown -R $(whoami):$(whoami) "$WORKSPACE_DIR" || true
+          fi
+
+      - uses: actions/checkout@v4
+
+      - name: Read pinned gritt commit
+        id: gritt
+        run: echo "ref=$(cat ci/gritt-ref)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          repository: Gritt-Robotics/gritt
+          ref: ${{ steps.gritt.outputs.ref }}
+          path: gritt
+          token: ${{ secrets.ORG_ACCESS_TOKEN_FOR_CI }}
+          sparse-checkout: ros2_ws/src
+
+      - name: Publish every revision not yet in the store
+        run: |
+          # The runner's reader credential cannot write; publishing needs the publisher's.
+          export GRITT_PUBLISH_GCS_CRED_DIR="${GRITT_PUBLISH_GCS_CRED_DIR:-$HOME/.config/gritt/gcs-publish}"
+          if [ ! -f "$GRITT_PUBLISH_GCS_CRED_DIR/adc.json" ]; then
+            echo "Missing GCS publisher credential: $GRITT_PUBLISH_GCS_CRED_DIR/adc.json" >&2
+            exit 1
+          fi
+          ci/in_gritt_image.sh python3 -m config.publish_bundle publish --release robots/* deployments/*

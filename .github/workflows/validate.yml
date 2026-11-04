@@ -1,0 +1,58 @@
+name: Validate bundles
+
+on:
+  pull_request:
+
+jobs:
+  validate:
+    name: Bundles valid and current
+    runs-on: self-hosted
+    permissions:
+      contents: read
+    timeout-minutes: 45
+
+    steps:
+      # The self-hosted workspace is shared with docker-based jobs, which can leave
+      # root-owned files behind that break actions/checkout.
+      - name: Reclaim workspace
+        run: |
+          WORKSPACE_DIR="${GITHUB_WORKSPACE:-$PWD}"
+          if [ -n "$WORKSPACE_DIR" ] && [ "$WORKSPACE_DIR" != "/" ]; then
+            sudo rm -rf "$WORKSPACE_DIR" || true
+            mkdir -p "$WORKSPACE_DIR"
+            sudo chown -R $(whoami):$(whoami) "$WORKSPACE_DIR" || true
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Read pinned gritt commit
+        id: gritt
+        run: echo "ref=$(cat ci/gritt-ref)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          repository: Gritt-Robotics/gritt
+          ref: ${{ steps.gritt.outputs.ref }}
+          path: gritt
+          token: ${{ secrets.ORG_ACCESS_TOKEN_FOR_CI }}
+          sparse-checkout: ros2_ws/src
+
+      - name: Validate changed bundles against the release and main
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          changed=$(git diff --name-only "$BASE_SHA" HEAD)
+          if echo "$changed" | grep -q '^ci/'; then
+            # A new gritt pin or checker can invalidate any bundle.
+            bundles=""
+          else
+            bundles=$(echo "$changed" | grep -E '^(robots|deployments)/[^/]+/' \
+              | cut -d/ -f1,2 | sort -u | tr '\n' ' ')
+            if [ -z "$bundles" ]; then
+              echo "No bundle changed."
+              exit 0
+            fi
+          fi
+          ci/in_gritt_image.sh python3 ci/check_bundles.py --base "$BASE_SHA" $bundles

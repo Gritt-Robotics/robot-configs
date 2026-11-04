@@ -1,0 +1,16 @@
+{
+  "kind": "robot",
+  "name": "test_bench",
+  "schema_version": 1,
+  "parent_rev": null,
+  "source": "cloud",
+  "author": "sjudson@gritt.ai",
+  "created_at": "2026-11-04T01:37:56.297246Z",
+  "files": {
+    "calibration/autocalib_pick_lidar_calib_launch_test_bench.py": "2637c968046644c6feef45356ecd4b3c70fc74a2ad3854f009641cac6cf1b247",
+    "calibration/autocalib_pick_zed_calib_launch_test_bench.py": "c94b59e050ef2f62f7d9791489d526fce762532ab34d7053fd5d68cbb39fc855",
+    "calibration/autocalib_place_lidar_calib_launch_test_bench.py": "fd93f98db056a1600517b47e6ac892b9d3f4ccb5325d3428b5187246373d83be",
+    "calibration/autocalib_place_zed_calib_launch_test_bench.py": "4e370341514a1101ab2ddbc2996360f5da19966b81c5596441d78aeec41afbf1",
+    "zed.json": "82d602a5dc39609ce4bbcf883f9c9b209defff319d86d671c9432f9fe83b72fe"
+  }
+}

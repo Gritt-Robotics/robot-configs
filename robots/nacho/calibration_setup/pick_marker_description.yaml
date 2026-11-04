@@ -1,0 +1,11 @@
+target_intrinsics: true # Is target intrinsic available
+charuco:
+  square_x: 5 # Number of squares in the x direction
+  square_y: 7 # Number of squares in the y direction
+  marker_size_pixels: 200 # Size of each marker in pixels
+  square_size_pixels: 260 # Size of each square in pixels
+  margin_size_pixels: 2 # Margin size in pixels
+  border_size_bits: 1 # Border size in bits
+  board_size_meters: 0.665 # Longest board size (m)
+  marker_size_meters: 0.071 # Measured marker size (m)
+  dictionary: DICT_5X5_250 # Predefined ARUCO dictionaries in OpenCV for creating CHARUCO marker board

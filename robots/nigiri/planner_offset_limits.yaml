@@ -1,0 +1,8 @@
+planning_manager_node:
+  ros__parameters:
+    additional_inter_panel_spacing_min_m: -0.02
+    additional_inter_panel_spacing_max_m: 0.02
+    panel_release_offset_min_m: -0.01
+    panel_release_offset_max_m: 0.02
+    pick_gripper_travel_offset_in_ee_min_m: -0.01
+    pick_gripper_travel_offset_in_ee_max_m: 0.04

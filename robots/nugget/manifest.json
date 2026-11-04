@@ -1,0 +1,23 @@
+{
+  "kind": "robot",
+  "name": "nugget",
+  "schema_version": 1,
+  "parent_rev": null,
+  "source": "cloud",
+  "author": "sjudson@gritt.ai",
+  "created_at": "2026-11-04T01:37:56.297246Z",
+  "files": {
+    "calibration/autocalib_pick_lidar_calib_launch_nugget.py": "8ec1983a09f1ae911f55283031a37688a374167bbea569dda68e97b35bb6c2cc",
+    "calibration/autocalib_pick_zed_calib_launch_nugget.py": "00cdcc2387519e2b825abc2170d4036c9fc31c391493505da1f74b220c8803ab",
+    "calibration/autocalib_place_lidar_calib_launch_nugget.py": "8be4efc332a609ea493b6dcd111085d0fa0f47b9e93a17581c8d006463d374c4",
+    "calibration/autocalib_place_zed_calib_launch_nugget.py": "c4944f9829e118308633092bc259cb7532f0ad6ad78d9d023bf83db43c202f5b",
+    "calibration_setup/pick_calibration_waypoints.yaml": "cdfa17bf820a66597ba7638ff0ffea1c3ea489e22897710890c2d6879c539ed3",
+    "calibration_setup/pick_marker_description.yaml": "f22cf81026dd5e6d020a32df209dd18e8526eb2eb74991c292d5b35432a16e49",
+    "calibration_setup/place_calibration_waypoints.yaml": "d330b9dbb0a56bc6f8b770a1154b53f222584d1f6f9ecc118918b3087e5e68d0",
+    "calibration_setup/place_marker_description.yaml": "f22cf81026dd5e6d020a32df209dd18e8526eb2eb74991c292d5b35432a16e49",
+    "calibration_setup/target_rectangle_dimensions.yaml": "2849afa6ea265838418ed2aa1cacd4701b59529af3a55f769307d94fdbb99bcd",
+    "planner_offset_limits.yaml": "6be9f5627d89c5b689af19096bbe8960ce07b131302a66c20b70e2b33a5e1c61",
+    "reachability_tolerance_limits.yaml": "0d682c611155c5292c323efc0c685465fa60681e1699d381423356cc0ab9c0b9",
+    "zed.json": "b404e263046e9f6ab1e97fd1aeb635a2847845854f3fbb9ae56778453d118c67"
+  }
+}
