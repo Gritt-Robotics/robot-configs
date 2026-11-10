@@ -1,11 +1,11 @@
-name: Validate bundles
+name: Validate
 
 on:
   pull_request:
 
 jobs:
   validate:
-    name: Bundles valid and current
+    name: Affected robots valid against their releases
     runs-on: self-hosted
     permissions:
       contents: read
@@ -27,32 +27,16 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Read pinned gritt commit
-        id: gritt
-        run: echo "ref=$(cat ci/gritt-ref)" >> "$GITHUB_OUTPUT"
+      - name: Test the CI helpers
+        run: python3 -m unittest discover -s ci
 
-      - uses: actions/checkout@v4
-        with:
-          repository: Gritt-Robotics/gritt
-          ref: ${{ steps.gritt.outputs.ref }}
-          path: gritt
-          token: ${{ secrets.ORG_ACCESS_TOKEN_FOR_CI }}
-          sparse-checkout: ros2_ws/src
+      - name: Log in to Artifact Registry
+        run: |
+          CRED="${GRITT_GCS_CRED_DIR:-$HOME/.config/gritt/gcs}/adc.json"
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE="$CRED" gcloud auth print-access-token \
+            | docker login -u oauth2accesstoken --password-stdin us-docker.pkg.dev
 
-      - name: Validate changed bundles against the release and main
+      - name: Validate each affected robot in its release image
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: |
-          changed=$(git diff --name-only "$BASE_SHA" HEAD)
-          if echo "$changed" | grep -q '^ci/'; then
-            # A new gritt pin or checker can invalidate any bundle.
-            bundles=""
-          else
-            bundles=$(echo "$changed" | grep -E '^(robots|deployments)/[^/]+/' \
-              | cut -d/ -f1,2 | sort -u | tr '\n' ' ')
-            if [ -z "$bundles" ]; then
-              echo "No bundle changed."
-              exit 0
-            fi
-          fi
-          ci/in_gritt_image.sh python3 ci/check_bundles.py --base "$BASE_SHA" $bundles
+        run: ci/validate_affected.sh "$BASE_SHA"

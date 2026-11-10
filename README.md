@@ -1,9 +1,9 @@
 # robot-configs
 
-The reviewed source of every robot and deployment config bundle. CI validates each PR against
-the release robots run, and publishes each merged revision to
-`gs://gritt-deployments/test/{robot-configs,deployment-configs}/<name>/revisions/<rev>/`.
-Robots never read this repo. They pull published revisions over WireGuard.
+The only source of robot and fleet config. A change is a pull request: CI validates every robot
+it affects against the release that robot runs, and merging creates a GitHub deployment for
+each of those robots. Each robot's agent fetches its deployment's commit over WireGuard, stages
+it, activates it and reports the result as the deployment's status.
 
 Design: [Robot Release & Config Deployment Design](https://claude.ai/artifact/TWRbv5mGGX1K6Agw6M554C).
 
@@ -11,40 +11,41 @@ Design: [Robot Release & Config Deployment Design](https://claude.ai/artifact/TW
 
 | Path | Holds |
 | --- | --- |
-| `robots/<robot>/` | One robot's bundle: `zed.json`, `reachability_tolerance_limits.yaml`, `planner_offset_limits.yaml`, `calibration_setup/`, `calibration/` |
-| `deployments/<site>/` | One site's bundle: `object_models.yaml`, `install_direction*.yaml`, `tracker_gap.yaml` |
-| `ci/gritt-ref` | The gritt commit whose schemas and release definitions CI validates against |
+| `robots/<robot>/` | Everything specific to one robot, complete on its own: `perception/zed.json`, `reachability_tolerance_limits.yaml`, `planner_offset_limits.yaml`, `calibration_setup/` |
+| `fleets/<fleet>/` | What a group of robots shares: `object_models.yaml`, `install_direction*.yaml`, `tracker_gap.yaml` |
+| `assignments/<robot>.yaml` | The robot's `fleet` and `release` (a `vX.Y.Z` image tag) |
+| `ci/` | The helpers the workflows run |
 
-Each bundle has a `manifest.json` that seals its files. A revision's id is the hash of its
-manifest, so the id a PR shows is the id robots run.
+The schemas live in the gritt monorepo and ship in each release image, so a robot is checked by
+the schemas it runs.
 
-Not here:
-- Fleet-wide config ships in the release image.
-- Robot-local state (planner offsets, operator modes) stays on the robot.
+Not here: robot-local state (operator modes, planner offsets, generated calibrations). It stays
+on the robot, in `local/`, and survives every deployment.
 
-## Changing a bundle
+## Making a change
 
-1. Edit the files.
-2. Reseal, in the Gritt dev container:
-   `python3 -m config.publish_bundle reseal robots/<robot> --author <you>`.
-   The new revision records the one it replaces.
-3. Open a PR. CI then:
-   - runs every validation layer against the pinned release;
-   - checks your revision directly replaces the one on `main`. If someone merged first, merge
-     `main`, re-apply your edit and reseal.
+Edit the files and open a PR. CI (`validate.yml`) then:
+1. works out the affected robots: those whose robot tree or assignment changed, every robot
+   assigned to a changed fleet, or every robot when `ci/`, `.github/` or `.gitattributes` changed;
+2. runs `python3 -m config.validate_bundle repo . --robot ... --release` for each group of them,
+   inside `gritt-release:<release>` from Artifact Registry.
 
-For a new bundle, add `--kind robot|deployment --name <name>` to the reseal.
+Moving a robot to another fleet or release is a one-line change to its assignment. The release
+must already be published.
 
-Revisions made on a robot (calibration saves, waypoint recordings) come back as automatic PRs
-carrying the robot's own manifest. Review and merge them like any other PR.
+On merge, `deploy.yml` creates a deployment for each affected robot: environment `<robot>`, ref
+the merge commit, payload `{"release": "<tag>"}`. The repo's Environments page shows which commit
+each robot runs and its history.
 
 ## CI requirements
 
-Both workflows run on the org's self-hosted runners in `ghcr.io/gritt-robotics/gritt:v16`.
+Both workflows run on the org's self-hosted runners.
 
 | Workflow | Needs |
 | --- | --- |
-| `validate.yml` | Secret `ORG_ACCESS_TOKEN_FOR_CI`, to check out gritt |
-| `publish.yml` | The same secret, plus a GCS credential that can write `gs://gritt-deployments`, at `~/.config/gritt/gcs-publish/adc.json` on the runner |
+| `validate.yml` | Docker, and the runner's GCS reader credential at `~/.config/gritt/gcs/adc.json`, to pull release images |
+| `deploy.yml` | Only the workflow's own token (`deployments: write`) |
 
-Until release images exist, `ci/gritt-ref` pins a gritt commit. Bump it alongside each release.
+Make `Validate` a required check on `main`.
+
+Run the helpers' tests with `python3 -m unittest discover -s ci`.

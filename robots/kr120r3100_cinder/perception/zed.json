@@ -1,0 +1,20 @@
+{
+  "pick": {
+    "serial_number": "30632650",
+    "stream_address": "192.168.1.156",
+    "stream_port": "30000",
+    "grab_frame_rate": "15",
+    "grab_resolution": "HD2K",
+    "camera_model": "zed2i",
+    "enable_person_detection": "false",
+    "camera_name": "pick_detector_cam",
+    "depth_mode": "NONE",
+    "enable_positional_tracking": "false",
+    "enable_area_memory": "false",
+    "area_memory_file": "",
+    "enable_right": "false",
+    "publish_raw": "false",
+    "include_in_sensor_bundle": "true",
+    "include_right_images_in_sensor_bundle": "false"
+  }
+}

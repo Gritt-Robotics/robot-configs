@@ -1,0 +1,57 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+# Deployments must be created in merge order, so a robot's newest one is its newest commit.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: A deployment for each affected robot
+    runs-on: self-hosted
+    permissions:
+      contents: read
+      deployments: write
+    timeout-minutes: 10
+
+    steps:
+      - name: Reclaim workspace
+        run: |
+          WORKSPACE_DIR="${GITHUB_WORKSPACE:-$PWD}"
+          if [ -n "$WORKSPACE_DIR" ] && [ "$WORKSPACE_DIR" != "/" ]; then
+            sudo rm -rf "$WORKSPACE_DIR" || true
+            mkdir -p "$WORKSPACE_DIR"
+            sudo chown -R $(whoami):$(whoami) "$WORKSPACE_DIR" || true
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find affected robots
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          # A push that creates main has no previous commit to diff against.
+          if git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            python3 ci/affected_robots.py --base "$BEFORE" > affected.txt
+          else
+            python3 ci/affected_robots.py --all > affected.txt
+          fi
+          cat affected.txt
+
+      - name: Create the deployments
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Validation already gated the merge; required_contexts is empty so this run's own
+          # pending check does not block its deployments.
+          while read -r robot release; do
+            printf '{"ref":"%s","environment":"%s","task":"deploy","auto_merge":false,"required_contexts":[],"payload":{"release":"%s"},"description":"%s on %s"}' \
+              "$GITHUB_SHA" "$robot" "$release" "${GITHUB_SHA:0:7}" "$release" \
+              | gh api "repos/${GITHUB_REPOSITORY}/deployments" --input - --jq '"\(.environment): deployment \(.id)"'
+          done < affected.txt

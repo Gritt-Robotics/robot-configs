@@ -9,3 +9,13 @@ charuco:
   board_size_meters: 0.665 # Longest board size (m)
   marker_size_meters: 0.071 # Measured marker size (m)
   dictionary: DICT_5X5_250 # Predefined ARUCO dictionaries in OpenCV for creating CHARUCO marker board
+
+# Retroreflective discs taped to the board, as x, y centres in the ChArUco target frame (m).
+discs:
+  centres_target_m:
+    - [0.0475, 0.6175]
+    - [0.0475, 0.2375]
+    - [0.2375, 0.4275]
+    - [0.2375, 0.0475]
+    - [0.4275, 0.6175]
+    - [0.4275, 0.4275]
