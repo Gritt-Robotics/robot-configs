@@ -5,8 +5,6 @@ the release robots run, and publishes each merged revision to
 `gs://gritt-deployments/test/{robot-configs,deployment-configs}/<name>/revisions/<rev>/`.
 Robots never read this repo. They pull published revisions over WireGuard.
 
-Design: [Robot Release & Config Deployment Design](https://claude.ai/artifact/TWRbv5mGGX1K6Agw6M554C).
-
 ## Layout
 
 | Path | Holds |
