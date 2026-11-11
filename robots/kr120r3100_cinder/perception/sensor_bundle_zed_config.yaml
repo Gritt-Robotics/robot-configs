@@ -1,0 +1,58 @@
+/**:
+  ros__parameters:
+    # Node Parameters
+
+    # Camera provider selection
+    camera_provider_name: "zed" # Camera provider to use (currently only "zed" is supported)
+
+    # Global depth settings (applies to all cameras)
+    zed_enable_depth: true # Enable depth computation
+    zed_enable_right: false # Enable right camera image
+
+    # Auto exposure setting (applies to all cameras)
+    zed_auto_exposure: true
+
+    # Positional tracking (applies to every camera with enable_positional_tracking)
+    zed_tracking_mode: "GEN_3" # GEN_1, GEN_2 or GEN_3; GEN_1/GEN_2 need a depth mode other than NONE
+    zed_enable_imu_fusion: true # Fuse the camera IMU into positional tracking
+    # Tracking ignores depth closer than this. Use 1.0 for GEN_3 and 0.2 for GEN_1.
+    zed_tracking_depth_min_range_m: 1.0
+
+    # GPU device ID for ZED SDK processing
+    zed_gpu_id: -1 # -1 means auto-select
+
+    # Transform publishing settings
+    zed_publish_tf: true # Publish static and dynamic transforms
+    zed_publish_map_tf: false # Publish map->odom transform
+
+    # Frame IDs for tracking
+    zed_map_frame_id: "map"
+    zed_odom_frame_id: "odom"
+
+    # Processing Settings
+    max_distance_m: 7.0 # 10.0->7.0 to align with person_hazard_detector context_max_depth_m (see PR #1916)
+    predicted_next_panel_frame_id: "predicted_next_panel" # TF frame for predictions
+
+    # Output Settings
+    sensor_bundle_topic: "/sensor_bundle" # Output topic for bundled sensor data
+    heartbeat_topic: "/sensor_bundle_heartbeat" # Output topic for per-sensor heartbeat
+    ignore_stale_and_missing_checks: false # Skip timestamp validation checks if true
+
+    # Calibration mode (disables tracking, uses highest resolution, and advertises the raw
+    # per-camera image topics alongside the compressed sensor bundle)
+    calibration: false
+
+    # TF lookup settings
+    tf_lookup_camera_names: ["pick_detector_cam", "place_detector_cam"] # Only these cameras get TF lookups
+
+    # Profiler settings
+    use_profiler: true # Enable Tracy profiling scopes
+
+    # Image compression settings
+    parallel_image_compression: true # Compress the per-camera bundle images across the worker pool instead of one after another
+
+    # SVO2 snapshot settings (triggered from the monitor "SVO2 Snapshot" button)
+    svo2_snapshot_trigger_topic: "/monitor/svo2_snapshot" # Bool(True) trigger from the monitor
+    svo2_snapshot_status_topic: "/monitor/svo2_snapshot/recording_in_progress" # Latched status back to monitor
+    svo2_snapshot_duration_s: 5.0 # Duration of each SVO2 snapshot recording
+    svo2_snapshot_output_dir: "/data/logs/svo2_snapshots" # Timestamped subfolders are created here

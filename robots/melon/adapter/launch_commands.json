@@ -1,0 +1,80 @@
+{
+  "process_groups": {
+    "sensor_systems": ["sensors"],
+    "planning_and_localization": ["planning", "planning_rviz"],
+    "perception": ["perception"],
+    "peripherals": ["keyence_io"]
+  },
+  "monitor_groups": {
+    "planning_and_localization": ["planning", "drs"],
+    "perception": ["object_detector", "pose_estimation", "front_person_detection"],
+    "execution": ["execution"]
+  },
+  "sensors": {
+    "command": [
+      "ros2",
+      "launch",
+      "perception_config",
+      "sensors_launch.py",
+      "robot_name:=melon"
+    ],
+    "output": "output_sensors_launch.log"
+  },
+  "planning": {
+    "command": [
+      "ros2",
+      "launch",
+      "config",
+      "planning_launch.py",
+      "is_sim:=false",
+      "robot_name:=melon"
+    ],
+    "output": "output_planning_launch.log"
+  },
+  "perception": {
+    "command": [
+      "ros2",
+      "launch",
+      "perception_config",
+      "online_perception_launch.py",
+      "robot_name:=melon"
+    ],
+    "output": "output_perception_launch.log"
+  },
+  "planning_rviz": {
+    "command": [
+      "ros2",
+      "launch",
+      "tesseract_env_manager",
+      "tesseract_rviz_launch.py"
+    ],
+    "output": "output_planning_rviz_launch.log"
+  },
+  "calibration": {
+    "command": [
+      "ros2",
+      "launch",
+      "sensor_calibration",
+      "sensor_calibration_launch.py",
+      "is_sim:=false",
+      "robot_name:=melon",
+      "cross_validation:=true"
+    ],
+    "modes": {
+      "pick": "sensor_type:=pick",
+      "place": "sensor_type:=place"
+    },
+    "required": true,
+    "output": "output_calibration_launch.log"
+  },
+  "keyence_io": {
+    "command": [
+      "ros2",
+      "launch",
+      "keyence_io",
+      "keyence_io_launch.py",
+      "robot_name:=melon"
+    ],
+    "output": "output_keyence_io_launch.log"
+  }
+}

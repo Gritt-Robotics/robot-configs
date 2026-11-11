@@ -1,0 +1,42 @@
+/**:
+  ros__parameters:
+    # Robot type (refer to planner_msgs/msg/RobotArmType.msg)
+    robot_arm_type: 2
+
+    ## Velocity scaling factors (1 is quite fast).
+    # Default velocity scaling factor.
+    default_velocity_scaling_factor: 0.8
+
+    # Velocity scaling factor when the robot is in close proximity to objects.
+    proximity_velocity_scaling_factor: 0.4
+
+    # Post-place velocity scaling factor.
+    post_place_velocity_scaling_factor: 0.4
+
+    # Velocity scaling factor applied when a plan is executed in slow mode
+    # (e.g. override retract).
+    slow_execution_scale_factor: 0.05
+
+    # Trajectory interpolation params.
+    traj_dt_s: 0.01
+
+    # Time to advance the split point for trajectory processing.
+    split_time_advance_s: 0.5
+
+    # Fraction of the total trajectory duration to use as the speed transition duration.
+    # Lower fraction leads to quicker transitions.
+    transition_duration_fraction: 0.1
+
+    # Sigmoid transition sharpness parameter
+    # Controls how sharp/smooth the velocity transition is between trajectory segments.
+    # Recommended range: 4.0 - 10.0
+    # - Values below 2.0: Very smooth but may be too gradual for precision tasks
+    # - Values above 15.0: Very sharp but may cause mechanical stress/jerky motion
+    # - Default 6.0: Good balance between smoothness and precision
+    sigmoid_transition_sharpness: 6.0
+
+    # Time in seconds for the robot to decelerate to a stop when a pause is triggered.
+    pause_deceleration_time_s: 1.0
+
+    # Time in seconds to look ahead along the trajectory when resuming, to ensure only future trajectory points are considered for resuming execution.
+    resume_lookahead_time_s: 0.5

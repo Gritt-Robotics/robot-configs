@@ -1,0 +1,19 @@
+/**:
+  ros__parameters:
+    # The joint state from which the EE sensors acquire pick data.
+    ## Waree.
+    # pick_data_acquisition_pose: [-0.311, 1.021, 1.058, 0.016, -1.463, -0.954]
+    ## Canadian Solar.
+    pick_data_acquisition_pose: [-0.0119, -0.9108, 1.5580, -0.0436, 1.6547, -0.2585]
+
+    # The joint state from which the EE sensors acquire place data.
+    ## Waree.
+    # place_data_acquisition_pose: [-1.6202, -1.6608, 0.9344, -0.0436, 1.0923, 2.8589]
+    ## Canadian Solar.
+    place_data_acquisition_pose: [-1.6202, -1.6608, 0.9344, -0.0436, 1.0923, 2.8589]
+
+    # The joint state for stowing the robot.
+    # Horizontal pallets.
+    # stow_pose: [-0.311, -0.488, -0.836, 0.016, -1.463, -0.954]
+    # Vertical pallets.
+    stow_pose: [-0.0119, -2.2590, 2.6023, -0.0436, 0.5049, -0.2585]

@@ -1,0 +1,178 @@
+# OpenTelemetry Collector config for on-robot telemetry.
+#
+# Local half: tail the per-process JSONL streams and write OTLP JSON to disk for
+# offload. This file has no network exporter, so on its own it behaves the same
+# on a robot with connectivity and one without. Shipping the records to a
+# central backend is opt-in and lives in otelcol_cloud_config.yaml, an overlay
+# merged on top of this one.
+#
+# Paths are overridden via the ${env:...} substitutions so the launch file is the
+# single place that decides where telemetry lives.
+
+extensions:
+  # Persists each file's read offset across collector restarts. Without this,
+  # start_at: beginning re-reads every stream from the top on every restart and
+  # re-exports everything already offloaded.
+  file_storage:
+    directory: ${env:GRITT_OTLP_DIR}/.otelcol_state
+    create_directory: true
+
+receivers:
+  filelog:
+    include:
+      - ${env:GRITT_TELEMETRY_DIR}/*.jsonl
+      # Streams rotate by rename. A tail rotated away while the collector was down
+      # is only reachable here; the content fingerprint resumes it without repeats.
+      - ${env:GRITT_TELEMETRY_DIR}/*.jsonl.1
+    include_file_name: false
+    include_file_path: true
+    start_at: beginning
+    storage: file_storage
+    poll_interval: 5s
+    operators:
+      # Each line is already a complete JSON object with the sink's schema. Parsed
+      # into the body so Cloud Logging stores it as a queryable jsonPayload.
+      - type: json_parser
+        parse_to: body
+        timestamp:
+          parse_from: body.ts_ns
+          layout_type: epoch
+          layout: ns
+        severity:
+          parse_from: body.sev
+      # Promote the resource-shaped fields so downstream sees them as resource,
+      # not as per-record fields.
+      - type: move
+        from: body.robot
+        to: resource["service.namespace"]
+      - type: move
+        from: body.logger
+        to: resource["service.name"]
+      - type: move
+        from: body.run_id
+        to: resource["service.instance.id"]
+
+  # Console output adapter captures per launch: what never reaches rcutils, so the
+  # sink cannot see it -- tracebacks, print(), std::terminate, launch's exit lines.
+  filelog/console:
+    include:
+      - ${env:GRITT_CONSOLE_LOG_DIR}/output_*.log
+    # The collector's own output would feed back into itself.
+    exclude:
+      - ${env:GRITT_CONSOLE_LOG_DIR}/output_telemetry_collector*.log
+    exclude_older_than: 24h
+    include_file_name: true
+    include_file_path: true
+    start_at: beginning
+    storage: file_storage
+    poll_interval: 5s
+    operators:
+      # Every ROS log line is echoed here too; the JSONL stream already holds a
+      # structured copy. WARN and above stay, for nodes that have no sink yet.
+      - type: filter
+        expr: 'body matches "^(\\[[^\\] ]+-[0-9]+\\] )?\\[(DEBUG|INFO)\\] \\[[0-9]+\\.[0-9]+\\] \\[" or body matches "^\\[[^\\] ]+-[0-9]+\\]\\s*$"'
+      # launch's own lines: "[ERROR] [object_detector-3]: process has died [...]".
+      - type: regex_parser
+        if: 'body matches "^\\[(DEBUG|INFO|WARN|ERROR|FATAL)\\] \\[[^\\]]+\\]: "'
+        regex: '^\[(?P<severity>DEBUG|INFO|WARN|ERROR|FATAL)\] \[(?P<process>[^\]]+)\]: (?P<message>.*)$'
+        severity:
+          parse_from: attributes.severity
+      # A process's own output, prefixed by launch: "[object_detector-3] Traceback ...".
+      - type: regex_parser
+        if: 'body matches "^\\[[^\\] ]+-[0-9]+\\] "'
+        regex: '^\[(?P<process>[^\] ]+-[0-9]+)\] (?P<message>.*)$'
+      - type: move
+        if: 'attributes.message != nil'
+        from: attributes.message
+        to: body
+      - type: remove
+        if: 'attributes.severity != nil'
+        field: attributes.severity
+      # Process names repeat across launch files, so the file is part of the source.
+      - type: add
+        field: attributes.source
+        value: 'EXPR(attributes["log.file.name"] + ":" + (attributes.process ?? ""))'
+      # One record per traceback or multi-line message: indented lines, the final
+      # exception line, and chained-exception headers continue the one before.
+      - type: recombine
+        combine_field: body
+        combine_with: "\n"
+        source_identifier: attributes.source
+        is_first_entry: 'body matches "^\\S" and not (body matches "^[A-Za-z_][\\w.]*(?i:error|exception|interrupt|exit|iteration|expired|timeout)(:|$)") and not (body matches "^(During handling of|The above exception)")'
+      - type: remove
+        field: attributes.source
+      - type: move
+        if: 'attributes.process != nil'
+        from: attributes.process
+        to: resource["service.name"]
+      - type: add
+        field: resource["service.namespace"]
+        value: ${env:GRITT_ROBOT_NAME}
+
+  # One record per crash, written by crash_tail: the process's last console lines,
+  # INFO included, ending in launch's "process has died" line.
+  filelog/crash_reports:
+    include:
+      - ${env:GRITT_CRASH_DIR}/*.jsonl
+    include_file_path: true
+    start_at: beginning
+    storage: file_storage
+    poll_interval: 5s
+    operators:
+      - type: json_parser
+        timestamp:
+          parse_from: attributes.ts_ns
+          layout_type: epoch
+          layout: ns
+        severity:
+          parse_from: attributes.sev
+      - type: move
+        from: attributes.msg
+        to: body
+      - type: move
+        from: attributes.process
+        to: resource["service.name"]
+      - type: add
+        field: resource["service.namespace"]
+        value: ${env:GRITT_ROBOT_NAME}
+
+processors:
+  # Bounds collector memory so a telemetry backlog can never starve the robot's
+  # real work; CPU is bounded separately by pinning to the peripherals cores.
+  memory_limiter:
+    check_interval: 5s
+    limit_mib: 128
+    spike_limit_mib: 32
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+
+exporters:
+  file:
+    path: ${env:GRITT_OTLP_DIR}/telemetry.otlp.json
+    rotation:
+      # Provisional, matching the sink's own placeholder sizing. Revisit once a
+      # steady-state volume measurement exists -- see
+      # gritt_telemetry/docs/measuring_log_volume.md.
+      max_megabytes: 32
+      max_backups: 5
+    format: json
+
+service:
+  extensions: [file_storage]
+  telemetry:
+    logs:
+      level: warn
+  pipelines:
+    logs:
+      receivers: [filelog]
+      processors: [memory_limiter, batch]
+      exporters: [file]
+    logs/console:
+      receivers: [filelog/console]
+      processors: [memory_limiter, batch]
+      exporters: [file]
+    logs/crash_reports:
+      receivers: [filelog/crash_reports]
+      processors: [memory_limiter, batch]
+      exporters: [file]

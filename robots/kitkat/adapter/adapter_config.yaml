@@ -1,0 +1,132 @@
+/**:
+  ros__parameters:
+    # Robot identity
+    robot_id: "9D5BAAD8-F606-452C-8A6B-56D95BBDA7EB"
+    robot_name: "GR-001"
+
+    # Monitor topic role assignments: name, message type, and QoS per role
+    topic_name_system_state: /system_state
+    topic_type_system_state: system_state_interface/msg/SystemState
+    topic_qos_system_state: RELIABLE
+    topic_name_planner_state: /planner_state
+    topic_type_planner_state: planner_msgs/msg/PlannerState
+    topic_qos_planner_state: RELIABLE
+    topic_name_execution_state: /execution_state
+    topic_type_execution_state: planner_msgs/msg/ExecutionState
+    topic_qos_execution_state: RELIABLE
+    topic_name_perception_state: /perception_state
+    topic_type_perception_state: perception_interfaces/msg/PerceptionState
+    topic_qos_perception_state: RELIABLE
+    topic_name_sensor_readings: /sensor_readings
+    topic_type_sensor_readings: system_state_interface/msg/SensorReadings
+    topic_qos_sensor_readings: RELIABLE
+    topic_name_planner_debug: /planner_debug
+    topic_type_planner_debug: planner_msgs/msg/PlannerDebug
+    topic_qos_planner_debug: RELIABLE
+    topic_name_execution_debug: /execution_debug
+    topic_type_execution_debug: planner_msgs/msg/ExecutionDebug
+    topic_qos_execution_debug: RELIABLE
+    topic_name_calibration_result: /calibration_result
+    topic_type_calibration_result: calibration_interfaces/msg/CalibrationResult
+    topic_qos_calibration_result: RELIABLE
+    # Process-monitor-only topics: subscribed solely to feed ProcessMonitorManager
+    topic_name_drs_debug: /drs_debug
+    topic_type_drs_debug: drs_interfaces/msg/DRSDebug
+    topic_qos_drs_debug: RELIABLE
+    topic_name_object_detections: /object_detections
+    topic_type_object_detections: perception_interfaces/msg/ObjectDetections
+    topic_qos_object_detections: RELIABLE
+    topic_name_pose_estimator_heartbeat: /pose_estimator_heartbeat
+    topic_type_pose_estimator_heartbeat: std_msgs/msg/Bool
+    topic_qos_pose_estimator_heartbeat: RELIABLE
+    topic_name_front_person_detection_image: /image_with_person_annotations_0
+    topic_type_front_person_detection_image: sensor_msgs/msg/Image
+    topic_qos_front_person_detection_image: RELIABLE
+    topic_name_sensor_bundle_heartbeat: /sensor_bundle_heartbeat
+    topic_type_sensor_bundle_heartbeat: perception_interfaces/msg/SensorBundleHeartbeat
+    topic_qos_sensor_bundle_heartbeat: RELIABLE
+    topic_name_peripheral_heartbeat: /peripheral_heartbeat
+    topic_type_peripheral_heartbeat: system_state_interface/msg/PeripheralHeartbeat
+    topic_qos_peripheral_heartbeat: RELIABLE
+    topic_name_robot_arm_controller_status: /monitor/robot_arm_controller_status
+    topic_type_robot_arm_controller_status: system_state_interface/msg/RobotArmControllerStatus
+    topic_qos_robot_arm_controller_status: RELIABLE
+    topic_name_gripper_state: /gripper_state
+    topic_type_gripper_state: gripper_interface/msg/GripperState
+    topic_qos_gripper_state: RELIABLE
+    topic_name_hazard_detection: /hazard_detection
+    topic_type_hazard_detection: system_state_interface/msg/HazardDetection
+    topic_qos_hazard_detection: RELIABLE
+
+    # Redis configuration
+    redis_host: localhost
+    redis_port: 6379
+    redis_stream_name: gritt_adapter_stream
+    redis_max_stream_length: 1000
+
+    # Socket.io configuration (set socketio_enabled to false to disable)
+    socketio_enabled: true
+    socketio_server_url: http://localhost:8080
+    socketio_namespace: /
+    socketio_entity: "grittAdapter"
+
+    # Socket.io retry configuration
+    socketio_max_retries: -1  # -1 for infinite retries
+    socketio_initial_retry_delay_s: 1.0
+    socketio_max_retry_delay_s: 60.0
+    socketio_retry_backoff_multiplier: 2.0
+
+    # Backend endpoint URL.
+    backend_auth_url: http://localhost:8080/auth/signin
+
+    # Heartbeat configuration
+    heartbeat_interval_s: 1.0
+
+    # Minimum interval between consecutive Redis monitor packet publishes (seconds).
+    # Prevents high-frequency topic callbacks from flooding the stream.
+    monitor_publish_min_interval_s: 1.0
+
+    # Verbose debug logging (e.g. full assembled packets)
+    enable_debug: false
+
+    # Process manager configuration
+    process_manager_config_file: launch_commands_kitkat.json
+    # Directory for subprocess stdout/stderr log files
+    log_output_dir: /data/logs
+    # Process monitor configuration
+    process_monitor_config_file: process_monitors_kitkat.json
+    # Command handler service names
+    pause_execution_service_name: /pause_execution
+    resume_execution_service_name: /resume_execution
+    stow_service_name: /stow_request
+    reset_drs_service_name: /reset_drs
+    commit_calibration_service_name: /commit_calibration
+    vehicle_button_state_service_name: /vehicle_button_state_request
+    system_ready_topic_name: /ext_inputs/system_ready
+    gripper_action_name: keyence_io/gripper_action
+
+    # Operator button service names
+    light_and_sound_service_name: /light_and_sound_request
+
+    # Operator button publish topic names
+    tracker_gap_topic_name: /monitor/tracker_gap
+    manual_install_topic_name: /monitor/manual_install
+    pallet_completed_topic_name: /monitor/pallet_completed
+    last_panel_flipped_topic_name: /monitor/last_panel_flipped
+    start_of_row_topic_name: /monitor/start_of_row
+    end_of_row_topic_name: /monitor/end_of_row
+    start_of_pallet_topic_name: /monitor/start_of_pallet
+    svo2_snapshot_topic_name: /monitor/svo2_snapshot
+    sensor_bundle_snapshot_topic_name: /monitor/sensor_bundle_snapshot
+    manual_intervention_topic_name: /monitor/manual_intervention
+    log_annotations_topic_name: /monitor/log_annotations
+
+    # Snapshot recording status topic names (transient-local Bool flags from recorders)
+    pallet_snapshot_recording_status_topic_name: /monitor/pallet_completed/recording_in_progress
+    last_panel_flipped_snapshot_recording_status_topic_name: /monitor/last_panel_flipped/recording_in_progress
+    start_of_row_snapshot_recording_status_topic_name: /monitor/start_of_row/recording_in_progress
+    end_of_row_snapshot_recording_status_topic_name: /monitor/end_of_row/recording_in_progress
+    start_of_pallet_snapshot_recording_status_topic_name: /monitor/start_of_pallet/recording_in_progress
+    svo2_snapshot_recording_status_topic_name: /monitor/svo2_snapshot/recording_in_progress
+    sensor_bundle_snapshot_recording_status_topic_name: /monitor/sensor_bundle_snapshot/recording_in_progress
+    manual_intervention_recording_status_topic_name: /monitor/manual_intervention/recording_in_progress

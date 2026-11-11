@@ -1,0 +1,12 @@
+fanuc_rmi_controller_node:
+  ros__parameters:
+    rmi_ip: '192.168.1.100'
+    rmi_port: '16001'
+    joint_names: ['revolute_1', 'revolute_2', 'revolute_3', 'revolute_4', 'revolute_5', 'revolute_6']
+    joint_state_pub_topic: '/joint_states'
+    goal_timeout_s: 20.0
+    slow_execution_goal_timeout_s: 100.0
+
+    # Pause and resume RMI service names.
+    pause_rmi_service: /fanuc_rmi_controller/pause
+    resume_rmi_service: /fanuc_rmi_controller/resume

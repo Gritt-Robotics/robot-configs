@@ -1,0 +1,27 @@
+drs:
+  ros__parameters:
+    base_frame_id: base_link
+    reference_frame_id: last_fixed_panel
+    next_panel_frame_id: predicted_next_panel
+    driver_reference_image_topic: /driver_reference_image
+    sensor_bundle_topic: /sensor_bundle
+    planner_debug_topic: /planner_debug
+    map_pose_topic: /place_detector_cam/zed_node/pose
+    vehicle_alignment_for_install_topic: /vehicle_aligned_for_install
+    drs_debug_topic: /drs_debug
+    offline_drs_debug_topic: /drs_offline_debug # Recomputed DRSDebug published in offline mode; /drs_debug carries the replayed input there
+    reset_drs_service: reset_drs
+    system_state_topic: /system_state
+    drs_sensor_name: "place_detector_cam"
+    default_panel_plane_height_in_base_m: 0.00 # Fallback horizontal panel plane height along base +Z, used when no previous panel pose is available (e.g. first panel of the run)
+    vehicle_alignment_tolerance_m: 0.0 # Tolerance for the vehicle within the reachability limits
+    drs_timer_frequency_hz: 10.0 # Frequency of the DRS timer
+    speed_window_duration_s: 2.0 # Duration for the speed window (in seconds)
+    limiting_speed_mps: 1.0 # Maximum allowed forward speed of the vehicle before resetting DRS
+    limiting_distance_m: 5.0 # Maximum allowed distance traversed since the last object pose message by the vehicle before resetting DRS
+    max_odometry_step_speed_mps: 10.0 # Reject a single odometry step whose implied speed (translation/dt) exceeds this as spurious; set above operating speed so real motion is integrated
+    max_odometry_gate_duration_s: 120.0 # Failsafe: release the odometry gate if a place-pose observation is not followed by a panel detach within this long, so an aborted install cannot freeze the reference
+    offline_mode: false # Set to true to replay DRS algorithm from a BAG file via drs_debug_topic
+    drs_image_log_interval_ticks: 10 # Attach the camera image to every Nth DRSDebug message; every other field is logged on every tick
+    drs_image_log_scaling_factor: [1, 2] # TurboJPEG (numerator, denominator) fraction the logged image and its intrinsics are downscaled by
+    drs_image_log_jpeg_quality: 60 # JPEG quality the downscaled image is re-encoded at, matching the sensor bundle's quality

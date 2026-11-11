@@ -1,0 +1,18 @@
+/**:
+  ros__parameters:
+    # Robot controller action name.
+    arm_traj_ctrl_action: fanuc_rmi_controller/follow_joint_trajectory
+
+    # Gripper controller action name.
+    gripper_ctrl_action: keyence_io/gripper_action
+
+    # Pause and resume RMI services.
+    pause_rmi_service: /fanuc_rmi_controller/pause
+    resume_rmi_service: /fanuc_rmi_controller/resume
+
+    # Pause and resume service names.
+    pause_execution_service: pause_execution
+    resume_execution_service: resume_execution
+
+    # Joint states topic name.
+    joint_states_topic: joint_states

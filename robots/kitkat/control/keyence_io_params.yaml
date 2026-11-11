@@ -1,0 +1,61 @@
+keyence_io_node:
+  ros__parameters:
+    # IP address of the IO devices.
+    ip_address_1: 192.168.1.35
+    ip_address_2: 192.168.1.36
+    ip_address_3: 192.168.1.42
+
+    # Name of the gripper action.
+    gripper_action_name: keyence_io/gripper_action
+
+    # Vacuum and no-vacuum thresholds.
+    gripper_vacuum_threshold_uamp: 6000
+    gripper_no_vacuum_threshold_uamp: 8000
+    # Below this the sensor cannot be reading a real pressure, so the channel is treated as
+    # faulty and the gripper state as unconfirmed rather than vacuum-engaged.
+    gripper_invalid_reading_threshold_uamp: 1000
+    num_cups_for_sufficient_vacuum: 6
+    gripper_state_transition_timeout_s: 30.0
+
+    # Button topics.
+    worker_done_topic: /ext_inputs/worker_done
+    system_ready_topic: /ext_inputs/system_ready
+    tracker_gap_button_topic: /ext_inputs/tracker_gap
+
+    # Vehicle button state parameters.
+    vehicle_button_service_name: /vehicle_button_state_request
+
+    # Compressor pressure threshold.
+    compressor_pressure_threshold_uamp: 6000
+
+    # External light/sound params.
+    light_and_sound_service_name: /light_and_sound_request
+
+    # Sensor readings publish topic.
+    sensor_readings_topic: /sensor_readings
+
+    # Gripper state publish topic.
+    gripper_state_topic: /gripper_state
+
+    # UPS parameters.
+    ups_low_battery_voltage_threshold_v: 12.0
+
+    # Pause topics.
+    pause_execution_topic: /pause_execution
+
+    # Peripheral heartbeat topic.
+    peripheral_heartbeat_topic: /peripheral_heartbeat
+
+    # If true, uses the tracker gap button to reset DRS.
+    use_tracker_gap_button_for_drs_reset: True
+
+    # Service to reset DRS.
+    drs_reset_service_name: reset_drs
+
+    # Panel flip service name.
+    panel_flip_service_name: panel_flip_request
+
+    # Generator fuel level threshold.
+    generator_fuel_level_upper_bound_uamp: 7400
+    generator_fuel_level_lower_bound_uamp: 4150
+    low_fuel_level_threshold_percent: 20.0  

@@ -1,0 +1,27 @@
+robot_arms:
+  kr120r3100:
+    moveit_config_package: kr120r3100_moveit_config
+    controller: ros2_control
+    known_states_file: known_robot_states_kr120r3100.yaml
+    service_names_file: service_names_kr120r3100.yaml
+    exec_params_file: exec_params_kr120r3100.yaml
+    exec_params_slow_file: exec_params_kr120r3100_slow.yaml
+    planning_params_file: planning_params_kr120r3100.yaml
+system_types:
+  module_installer_legacy_single_sensor:
+    arm_slots:
+    - main
+    legacy: true
+    lidar_config: lidar_single_sensor_config.json
+    artifacts:
+    - sensor_calibration
+    - calibration_launch
+    - zed_config
+    - adapter
+    - drs_reachability
+    - planner_offsets
+systems:
+  blueberry:
+    type: module_installer_legacy_single_sensor
+    arms:
+      main: kr120r3100

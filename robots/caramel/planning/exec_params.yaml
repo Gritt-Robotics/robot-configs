@@ -1,0 +1,28 @@
+/**:
+  ros__parameters:
+    # Robot speed percent values for different trajectory stages.
+    free_robot_speed_percent: 50.0            # Panel is unattached during pick-place motion.
+    pick_speed_percent: 25.0                  # Speed during the pick operation.
+    place_speed_percent: 15.0                 # Speed during the place operation.
+    post_detach_retract_speed_percent: 10.0   # Post-detach retract speed.
+    default_speed_percent: 65.0               # All other trajectory stages.
+
+    # Trajectory interpolation params.
+    traj_dt_s: 0.5
+
+    ## Velocity scaling factors (unused).
+    # Default velocity scaling factor.
+    default_velocity_scaling_factor: 0.8
+
+    # Velocity scaling factor when the robot is in close proximity to objects.
+    proximity_velocity_scaling_factor: 0.4
+
+    # Post-place velocity scaling factor.
+    post_place_velocity_scaling_factor: 0.4
+
+    # Velocity scaling factor applied when a plan is executed in slow mode
+    # (e.g. override retract).
+    slow_execution_scale_factor: 0.05
+
+    # Robot type (refer to planner_msgs/msg/RobotArmType.msg)
+    robot_arm_type: 1

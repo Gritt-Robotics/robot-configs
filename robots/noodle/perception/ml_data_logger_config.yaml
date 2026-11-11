@@ -1,0 +1,53 @@
+# ML Data Logger Configuration
+
+ml_data_logger:
+  ros__parameters:
+    # Operation mode: "record" or "replay"
+    mode: "record"
+
+    # Session configuration
+    session_id: ""  # Auto-generated if empty (e.g., "session_20260210_143022")
+    log_directory: "/data/ml_data_logs"  # Root directory for data storage
+    log_prefix: "session"  # Prefix for auto-generated session IDs
+
+    # RGB configuration
+    rgb_codec: "h264"       # Video codec: "h264" or "h265"
+    rgb_fps: 30.0           # Video frame rate in Hz
+    rgb_bitrate_mbps: 10.0  # Video bitrate in Mbps
+    rgb_video_duration_minutes: 5.0  # Video file duration in minutes
+
+    # Depth configuration
+    enable_depth: true      # Whether to record depth streams
+    # "tiff" = the sensor_bundle TIFF stored as-is: no decode/re-encode, about zstd's size.
+    # "zstd" and "png" remain available; every format decodes on read.
+    depth_encoding: "tiff"
+
+    # Draco is on by default: lossy xyz plus non-xyz folding, materially smaller
+    # than raw-zstd. Set both false for the lossless raw-zstd path.
+    lidar_use_quantization: true
+    lidar_draco_fold_nonxyz: true
+
+    # Codec for the lidar stream: "draco" (default), "cloudini_lossy", or
+    # "cloudini_lossless". Cloudini takes precedence over the draco flags above.
+    # Draco stays the default until cloudini is benchmarked on real bundles.
+    lidar_compression: "draco"
+
+    # Consecutive frames often repeat the same integrated cloud; store those bytes
+    # once. Lossless. Set false to write every frame independently (for A/B measuring).
+    lidar_dedup_repeated_payloads: true
+
+    # Recording parameters (only used in record mode)
+    recording_hz: 1.0      # Recording rate in Hz (how often to process cached sensor_bundle messages)
+
+    # Encode a bundle's per-stream writes concurrently. Serial encoding of every stream
+    # on the timer thread cannot hold the period once a bundle carries several cameras.
+    parallel_stream_writes: true
+
+    # The interesting data is produced around install cycles, so recording starts on
+    # an INSTALL_REQUESTED state and pauses once none arrives within the timeout.
+    install_gated_recording: true
+    install_request_timeout_s: 300.0
+
+    # Replay parameters (only used in replay mode)
+    sensor_bundle_publish_hz: 10.0  # Publishing rate for sensor_bundle messages in Hz
+    loop_replay: false      # Whether to loop replay

@@ -1,0 +1,25 @@
+# Every robot's dual-antenna GNSS receiver, read through gpsd.
+/**:
+  ros__parameters:
+    gpsd_host: localhost
+    gpsd_port: 2947
+    # The receiver's USB port; gnss_launch.py's device_path argument overrides it for one run.
+    device_path: /dev/ttyACM0
+    antenna_frame: gnss_antenna_1
+    baseline_frame: gnss_baseline
+    # The receiver's raw bytes, to re-solve a recording later.
+    publish_raw: true
+    measurement_period_ms: 200
+    # The operator's NTRIP account for RTK corrections, from ntrip.conf.example; empty for no
+    # corrections. Relative to gnss_ros/config; read by gnss_launch.py for the relay.
+    ntrip_conf: ntrip.conf
+    # Loopback port the corrections relay serves: gpsd reads the corrections there, and the
+    # position reporter sends the receiver's GGA.
+    corrections_port: 2101
+    # Where the antennas are on the robot, published by gnss_launch.py as static transforms.
+    # Unmeasured: zeros until the antennas are measured.
+    mount_frame: base_link
+    # Antenna 1, which the position refers to: x forward, y left, z up.
+    mount_from_antenna_xyz_m: [0.0, 0.0, 0.0]
+    # The line from antenna 1 to antenna 2, which the heading follows: 0 with antenna 2 ahead.
+    antenna_from_baseline_yaw_rad: 0.0

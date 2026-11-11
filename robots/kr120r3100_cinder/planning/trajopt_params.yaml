@@ -1,0 +1,47 @@
+planning_manager_node:
+  ros__parameters:
+    trajopt_plan_profile:
+      # Params for the `TrajOptDefaultPlanProfile`
+      cartesian_cost_config:
+        enabled: false
+      cartesian_constraint_config:
+        enabled: true
+        tol: 1e-3
+        coeff: 1.0
+      joint_cost_config:
+        enabled: false
+      joint_constraint_config:
+        enabled: true
+        tol: 1e-3
+        coeff: 1e-3
+    
+    trajopt_composite_profile:
+      # Params for the `TrajOptDefaultCompositeProfile`
+      smooth_velocities: true
+      smooth_accelerations: true
+      smooth_jerks: true
+      collision_constraint_config:
+        enabled: true
+        safety_margin: 0.001
+        safety_margin_buffer: 0.001
+        coeff: 10.0
+      collision_cost_config:
+        enabled: true
+        safety_margin: 0.02
+        safety_margin_buffer: 0.02
+        coeff: 500.0
+    
+    trajopt_solver_profile:
+      # Params for the `TrajOptDefaultSolverProfile`
+      max_iter: 200
+      max_merit_coeff_increases: 10
+    
+    min_length_profile:
+      # Params for the `MinLengthProfile`
+      min_length: 20
+
+    linear_min_length_profile:
+      # Params for the linear `MinLengthProfile`
+      min_length: 5
+
+

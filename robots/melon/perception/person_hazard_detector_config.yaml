@@ -1,0 +1,60 @@
+# Loaded alongside object_detector_config.yaml by the object detector node, which
+# owns the hazard evaluator.
+/**:
+  ros__parameters:
+    # Master switch; the detectors launch overrides it from use_person_detection.
+    use_person_hazard_detection: true
+
+    # Tracy scopes for the hazard path. Separate from the detector's use_profiler
+    # so either can be silenced on its own; both emit on the detector's port.
+    use_hazard_profiler: True
+
+    # Debug cv2 grid visualizer; disable in production.
+    use_visualizer: False
+
+    # Output topic
+    hazard_detection_topic: "/hazard_detection"
+
+    # General
+    base_frame: "base_link"
+    unpausing_delay_s: 1.0
+
+    # Classes whose masks are parsed for hazard evaluation; the person class, and
+    # the context class when enabled, are always included on top of this list.
+    hazard_mask_classes: ["person"]
+
+    # Distance-based model (stereo depth)
+    use_distance_based_detection: true
+    distance_based_sensor_names: ["person_scene_detector_cam", "front_scene_detector_cam"]
+    # Per-sensor arrays match distance_based_sensor_names order. 3.30 m = 3.00 m target
+    # + 0.30 m ZED-over-LiDAR bias/drift margin (ZED reads long).
+    person_distance_threshold_m: [0.7, 4.50]
+    person_min_depth_m: [0.6, 1.5]
+    person_max_depth_m: [6.0, 6.0]
+    distance_min_in_range_fraction: [0.05, 0.05]  # min in-threshold fraction to trigger
+
+    # Context-based model (stereo depth + rail zones)
+    use_context_based_detection: true
+    context_based_sensor_names: ["place_detector_cam"]
+    context_class: "tracker"
+    # Core zone length along install (work window ahead of the near end); a rear buffer extends behind.
+    context_zone_length_m: 3.0
+    context_zone_behind_buffer_m: 0.5   # margin behind the near end (anti-install)
+    context_min_depth_m: 1.5
+    # Capped at 7 m: ZED depth becomes unreliable past ~7 m (p99 bias +37 cm at 7 m).
+    context_max_depth_m: 7.0
+    # Below-ground floor (base frame): drop bad-depth points that back-project below
+    # ground (a real tracker cannot) before cleaning. Mounting-dependent.
+    context_min_height_m: -0.5
+    context_min_in_zone_fraction: 0.05  # min in-zone fraction to trigger
+
+    # Tracker merging + install-oriented zone
+    use_tracker_merging: true
+    # RANSAC inlier band: a fragment joins the merged rail when most of its points lie
+    # within this perpendicular distance of the fitted line.
+    tracker_merge_max_line_distance_m: 0.4
+    # A percentile of the axial projection, on a 0-100 scale, NOT a fraction. Low
+    # tracks the physical near end while ignoring stray depth noise beyond it.
+    context_near_end_percentile: 1.0
+    # install_dir_in_base_frame comes from a shared config via the launch; the context zone
+    # radius is half the selected panel mesh's length.

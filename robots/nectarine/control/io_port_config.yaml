@@ -1,0 +1,66 @@
+keyence_io_node:
+  ros__parameters:
+
+    # Watchdog address.
+    watchdog_address: 4384
+
+    # Vacuum/blowoff control.
+    gripper_control_master_port: 5
+    gripper_speed_analog_port: 5
+    gripper_direction_digital_port: 1
+    gripper_direction_digital_pin: 2
+
+    # Cup pressure sensor readings.
+    vacuum_sensors_master_port: 4
+
+    # Fork load cells.
+    fork_load_cell_master_port: 6
+    fork_load_cell_left_hub_port: 5
+    fork_load_cell_right_hub_port: 6
+
+    # Fork angle measurements.
+    chassis_angle_master_port: 3
+    fork_angle_master_port: 2
+
+    # Worker button ports. The flip and status indices are pin indices into the digital
+    # port inputs; the flip pin is the panel flip toggle button.
+    worker_done_button_master_port: 6
+    worker_status_master_port: 7
+    worker_button_hub_port: 2
+    worker_button_state_pin: 4
+    worker_button_flip_idx: 1
+    worker_button_status_idx: 0
+
+    # Vehicle button.
+    vehicle_button_master_port: 8
+
+    # Tracker gap button.
+    tracker_gap_button_master_port: 6
+    tracker_gap_button_hub_port: 2
+    tracker_gap_button_pin: 2
+
+    # Alerts control.
+    alerts_master_port: 6
+    beeper_mode_hub_port: 3
+    beeper_enable_hub_port: 4
+    beeper_enable_pin: 2
+
+    # UPS.
+    ups_master_port: 7
+    ups_backup_status_hub_port: 1
+    ups_relay_status_hub_port: 2
+    ups_psu_1_status_hub_port: 5
+    ups_psu_2_status_hub_port: 6
+    ups_temperature_hub_port: 7
+    ups_battery_voltage_hub_port: 8
+
+    # Generator fuel level.
+    generator_fuel_level_master_port: 6
+    generator_fuel_level_hub_port: 8
+
+    # Safety controller register address.
+    safety_controller_register_address: 900
+
+    # Load cell.
+    load_cell_port_index: 6
+

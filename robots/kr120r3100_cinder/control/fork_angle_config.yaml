@@ -1,0 +1,7 @@
+# Shared fork-angle threshold and ordering for legacy machines, whose fork angle grows as the
+# forks rise. Counterpart to fork_angle_config.yaml; the robot manifest selects between them.
+# The /** wildcard makes this file apply to whichever node loads it, regardless of node name.
+/**:
+  ros__parameters:
+    min_allowable_fork_angle_y_rad: 0.15
+    forks_up_below_threshold: false

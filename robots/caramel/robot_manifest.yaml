@@ -1,0 +1,27 @@
+robot_arms:
+  m710:
+    moveit_config_package: m710ic45m_moveit_config
+    controller: fanuc_rmi
+    known_states_file: known_robot_states_fanuc.yaml
+    service_names_file: service_names_fanuc.yaml
+    exec_params_file: exec_params_fanuc.yaml
+    exec_params_slow_file: exec_params_fanuc_slow.yaml
+    planning_params_file: planning_params_m710.yaml
+system_types:
+  module_installer_legacy:
+    arm_slots:
+    - main
+    legacy: true
+    lidar_config: lidar_legacy_config.json
+    artifacts:
+    - sensor_calibration
+    - calibration_launch
+    - zed_config
+    - adapter
+    - drs_reachability
+    - planner_offsets
+systems:
+  caramel:
+    type: module_installer_legacy
+    arms:
+      main: m710

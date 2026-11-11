@@ -1,0 +1,86 @@
+/**:
+  ros__parameters:
+    object_detections_topic: "/object_detections"
+    system_state_topic: "/system_state"
+    system_state_staleness_threshold_s: 30.0
+    sensor_readings_topic: "/sensor_readings"
+    perception_requested_delay_s: 1.5
+    predicted_next_panel_frame_id: predicted_next_panel
+    sensors_for_pose_estimation: ["pick_detector_cam", "place_detector_cam"]
+    # Set the parameter below to False if you see a lot of false positive vehicle movement failures
+    detect_vehicle_movement: True
+    vehicle_movement_threshold_m: 0.3
+    # Set the parameter below to False if you see a lot of false positive fork movement failures
+    detect_fork_movement: True
+    fork_movement_threshold_rad: 0.035 # 2 degrees
+    need_panel_detections_in_all_sensors: True
+    # Detector classes that can stop pose estimation: "enforce" fails it, "shadow" only logs
+    # them for on-robot evaluation (detections are still recorded); unlisted ones are ignored.
+    decision_attribute_modes_json: '{"flipped": "shadow"}'
+    base_frame: "base_link"
+    median_distance_filter_configs_json: '{"panel-solar": [0.2, 3.5]}'
+    # install_dir_in_base_frame is single-sourced from the shared config package
+    # (config/params/install_direction.yaml), appended in the launch file.
+    filter_classes: ["panel-solar", "purlin", "purlin-curved-tracker-gap", "long-purlin"]
+    filter_closest_purlin_after_farthest_panel: False
+    filter_out_purlin_when_panel_is_present: False
+    # Sensor names for which install direction filtering is skipped entirely;
+    # all detections from these sensors are kept.
+    install_direction_filter_ignore_sensors: ["pick_detector_cam"]
+
+    # Pose estimation is only performed for object classes listed in mesh_classes;
+    # detections of any other class are ignored.
+    mesh_classes: ["panel-solar", "purlin", "purlin-curved-tracker-gap", "long-purlin"]
+    # Left empty so meshes are derived per class from the shared catalog; the [""]
+    # placeholder only keeps it a valid typed string array.
+    mesh_file_names: [""]
+
+    depth_refiner_type: "ransac"
+    ransac_depth_refiner_config: 1 # see RansacDepthRefinerConfig enum
+    rectangle_fitting_configs_json: '{"pick_detector_cam": 2, "place_detector_cam": 2}' # see RectangleFittingConfig enum
+    icp_for_non_planar_object_config: 0 # See ICPPoseRefinerConfig enum
+    icp_for_non_planar_object_num_iterations: 1000
+    # Gating correspondences beyond the object's own feature scale lets ICP latch onto
+    # neighbouring geometry and drag the pose away from the true one.
+    icp_for_non_planar_object_max_correspondence_distance_m: 0.04
+    # Dense relative to the correspondence gate, so observed surface points have mesh samples within it.
+    icp_for_non_planar_object_num_mesh_samples: 10000
+    depth_refiner_mask_iou_weight: 0.1
+    # Each class's purlin+tracker mesh is the tracker_model of its selected catalog model.
+    icp_for_non_planar_object_classes: ["purlin", "long-purlin"]
+
+    coarse_pose_estimator_type: "render_and_compare_pose_estimator" # can be one of {render_and_compare_pose_estimator}
+    coarse_pose_estimator_refine_iter: 5
+    coarse_pose_estimator_top_k: 3
+    coarse_pose_estimator_sample_around_last_pose: False
+    coarse_pose_estimator_num_samples: 50
+    coarse_pose_estimator_max_angle_deg: 10.0
+    # Panel poses are re-aligned to the fitted plane afterwards, so only the ~20 of 187 grid
+    # rotations near its normal are worth refining.
+    coarse_pose_estimator_max_plane_normal_deviation_deg: 30.0
+    # Good panel fits cost below ~0.009; failed ones cost 0.02 and up.
+    coarse_pose_estimator_max_fit_cost_before_full_search: 0.015
+    coarse_pose_estimator_use_mesh_object_cache: True
+    coarse_pose_estimator_mask_based_pose_estimation_classes: ["purlin", "purlin-curved-tracker-gap", "long-purlin"]  # Only used by render_and_compare_pose_estimator
+    coarse_pose_estimator_use_postprocessing: True
+    coarse_pose_estimator_use_preprocessing: True
+
+
+    pose_refiner_type: "" # can be one of {icp}
+    icp_pose_refiner_config: 3 # colored_p2l
+    icp_max_correspondence_distance_m: 0.005
+    icp_depth_trunc_distance_m: 3.0
+    icp_max_iterations: 100
+
+    object_id_assigner_type: "simple"
+    use_latest_time_for_tf: False
+
+    object_pose_estimates_topic: "/object_pose_estimates"
+    perception_state_topic: "/perception_state"
+    perception_debug_topic: "/perception_debug"
+    heartbeat_topic: "/pose_estimator_heartbeat"
+
+    # Debugging
+    is_benchmark: False
+    use_profiler: False
+    use_pyinstrument_profiler: False

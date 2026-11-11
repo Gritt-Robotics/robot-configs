@@ -1,0 +1,8 @@
+vehicle_state_node:
+  ros__parameters:
+    vehicle_state_topic: /vehicle_readiness_state
+    system_state_topic: /system_state
+    vehicle_state_button_service: /vehicle_button_state_request
+    driver_readiness_state_topic: /vehicle_aligned_for_install
+    sensor_readings_topic: /sensor_readings
+    use_drs_for_driver_readiness: True

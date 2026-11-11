@@ -1,0 +1,67 @@
+# Cloud half of on-robot telemetry: also ship the log records to Google Cloud
+# Logging.
+#
+# This file is an overlay merged on top of otelcol_config.yaml, and only when
+# cloud export is enabled -- collector_launch.py passes it as a second --config
+# behind a launch argument. A machine that leaves it off runs the local half
+# exactly as before, so connectivity is never a prerequisite for logging.
+#
+# Authentication is Application Default Credentials
+# (GOOGLE_APPLICATION_CREDENTIALS), the same keyless credential the rest of the
+# robot's cloud access uses. The README lists the IAM role it needs.
+
+exporters:
+  googlecloud:
+    project: ${env:GRITT_CLOUD_PROJECT}
+    log:
+      default_log_name: ${env:GRITT_CLOUD_LOG_NAME}
+    # A robot is offline for long stretches, so the queue is the whole design:
+    # accepting a batch means writing it to disk and returning immediately, and
+    # the send is retried out of that queue once a link comes back. Backed by
+    # the same file_storage extension the receiver uses for its read offsets, so
+    # a restart resumes rather than re-sending or losing the backlog.
+    sending_queue:
+      enabled: true
+      storage: file_storage
+      # Counted in batches, not records: with the batch processor's 1024-record
+      # batches this caps the backlog near 512k records. Provisional, not measured.
+      queue_size: 512
+      # One consumer: draining a backlog must not turn into a burst that
+      # competes with the robot's real work.
+      num_consumers: 1
+    # Bounds each send attempt so a stalled link cannot pin the one consumer;
+    # a timed-out send falls to the exporter's retry policy. Provisional.
+    timeout: 30s
+
+processors:
+  # DEBUG is reserved for per-loop detail and the robot's link is thin; the local
+  # copy keeps it for offload. INFO is what remote debugging reads.
+  filter/info_and_above:
+    error_mode: ignore
+    logs:
+      log_record:
+        - severity_number < SEVERITY_NUMBER_INFO
+  # Record attributes become Cloud Logging entry labels, so these give plain
+  # filters such as labels.robot="nein" instead of the OTel resource names.
+  transform/labels:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        statements:
+          - set(attributes["robot"], resource.attributes["service.namespace"])
+          - set(attributes["node"], resource.attributes["service.name"])
+          - set(attributes["run_id"], resource.attributes["service.instance.id"]) where resource.attributes["service.instance.id"] != nil
+
+service:
+  pipelines:
+    # A second pipeline off the same receiver: the local `logs` pipeline keeps
+    # every severity, and losing the link never costs the on-disk copy.
+    logs/cloud:
+      receivers: [filelog]
+      processors: [memory_limiter, filter/info_and_above, transform/labels, batch]
+      exporters: [googlecloud]
+    # Raw console output stays local; a crash report carries the lines that matter.
+    logs/crash_reports_cloud:
+      receivers: [filelog/crash_reports]
+      processors: [memory_limiter, transform/labels, batch]
+      exporters: [googlecloud]

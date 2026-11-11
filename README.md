@@ -11,7 +11,7 @@ Design: [Robot Release & Config Deployment Design](https://claude.ai/artifact/TW
 
 | Path | Holds |
 | --- | --- |
-| `robots/<robot>/` | Everything specific to one robot, complete on its own: `perception/zed.json`, `reachability_tolerance_limits.yaml`, `planner_offset_limits.yaml`, `calibration_setup/` |
+| `robots/<robot>/` | Everything one robot's stack reads, complete on its own: `robot_manifest.yaml` (its own entry), `cpu_affinity.yaml`, `adapter/`, `perception/` (`zed.json`, lidars, node configs), `planning/`, `control/`, `drs/`, `telemetry/`, `gnss/` (robots with GNSS), `data_collection/`, `calibration_setup/`, `reachability_tolerance_limits.yaml`, `planner_offset_limits.yaml`. The release validates that a robot holds exactly the files it reads. |
 | `fleets/<fleet>/` | What a group of robots shares: `object_models.yaml`, `install_direction*.yaml`, `tracker_gap.yaml` |
 | `assignments/<robot>.yaml` | The robot's `fleet` and `release` (a `vX.Y.Z` image tag) |
 | `ci/` | The helpers the workflows run |

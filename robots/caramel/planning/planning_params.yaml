@@ -1,0 +1,79 @@
+/**:
+  ros__parameters:
+    # These parameters define valid spatial regions that pick/place panel poses and purlins
+    # can lie in. 1.348530, -0.922478, -0.181183
+    pick_region_x_m: 1.35
+    pick_region_y_m: -0.9
+    pick_region_z_m: -0.18
+    pick_region_x_tol_m: 0.8
+    pick_region_y_tol_m: 0.8
+    pick_region_z_tol_m: 0.8
+
+    place_region_x_m: -0.95
+    place_region_y_m: 1.9
+    place_region_z_m: 0.85
+    place_region_x_tol_m: 2.003 # 0.7 + 1.303 as panel width for canadian
+    place_region_y_tol_m: 0.5
+    place_region_z_tol_m: 0.4
+
+    purlin_region_x_m: -1.0
+    purlin_region_y_m: 1.8
+    purlin_region_z_m: 0.5
+    purlin_region_x_tol_m: 3.5
+    purlin_region_y_tol_m: 0.5
+    purlin_region_z_tol_m: 0.6
+
+planning_manager_node:
+  ros__parameters:
+    # Robot and frame names.
+    robot_name: m710ic45m_arm
+    base_frame: base_link
+    ee_frame: gripper_frame_1
+    gripper_components:
+      [
+        "link_6_1",
+        "link_5_1",
+        "gripper_cup_6_1",
+        "gripper_cup_5_1",
+        "gripper_cup_4_1",
+        "gripper_cup_3_1",
+        "gripper_cup_2_1",
+        "gripper_cup_1_1",
+        "arms_HG",
+        "arm_gripper_1",
+        "ZED",
+        "camera_bracket",
+        "lidar_and_bracket",
+        "gripper_frame_1",
+      ]
+
+    # Scene objects whose collisions with the gripper are allowed while the panel is being picked
+    # up, and disallowed again once the robot has retracted away from the pick.
+    gripper_allowed_collision_objects_during_pick: ["panel_stack"]
+
+    # Pick-place params.
+    gripper_frame_to_cup_surface_m: -0.25
+    gripper_frame_y_offset_m: -0.15
+    gripper_frame_z_offset_m: 0.0
+    obj_to_gripper_frame_x_rot_rad: 0.0
+    obj_to_ee_frame_rot_rad: -0.26178 # -15 deg
+    pre_pick_x_offset_m: -0.1
+    post_pick_retract_z_offset_m: 0.03
+    post_pick_retract_x_offset_m: 0.03
+    override_retract_x_offset_m: -0.05
+    pre_place_min_z_in_base_m: 1.0
+
+    # Intermediate waypoints for the robot arm.
+    # Canadian solar.
+    pre_place_waypoint: [-0.021, 0.282, 0.886, -2.698, 1.885, 2.06]
+    pre_return_home_waypoint: [0.480, 0.451, 0.681, -3.041, 1.6032, 1.295]
+
+    # Waree.
+    # pre_place_waypoint: [-0.393, 0.953, 1.529, -0.084, -1.787, -0.960]
+    # pre_return_home_waypoint: [0.447, 0.532, 0.569, 0.015, -1.463, -0.953]
+
+    # If true, adds a pre-return home waypoint.
+    add_pre_return_home_waypoint: True
+
+    # Should trajectory stages be merged for execution?
+    merge_planning_stages_enabled: False
