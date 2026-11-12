@@ -1,0 +1,8 @@
+# Site-specific tracker-gap spacing, tuned from the dashboard and shipped in the deployment
+# bundle. Loaded alongside planning_manager/config/planning_manager_params.yaml.
+/**:
+  ros__parameters:
+    # The additional offset along the width dimension of the reference object in tracker gap cases.
+    width_offset_with_tracker_gap_m: 0.18
+    width_offset_with_tracker_gap_min_m: 0.01
+    width_offset_with_tracker_gap_max_m: 0.25
