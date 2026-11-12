@@ -55,7 +55,7 @@
     "enable_right": "false",
     "include_right_images_in_sensor_bundle": "false"
   },
-  "front_right_scene": {
+  "right_front": {
     "serial_number": "41628974",
     "stream_address": "192.168.1.156",
     "stream_port": "30004",
@@ -63,7 +63,7 @@
     "grab_resolution": "HD1200",
     "camera_model": "zedx",
     "enable_person_detection": "false",
-    "camera_name": "front_right_scene_detector_cam",
+    "camera_name": "right_front_scene_detector_cam",
     "depth_mode": "NEURAL",
     "confidence_threshold": "30",
     "enable_positional_tracking": "false",
@@ -93,7 +93,7 @@
     "enable_right": "false",
     "include_right_images_in_sensor_bundle": "false"
   },
-  "front_left_scene": {
+  "left_front": {
     "serial_number": "41787142",
     "stream_address": "192.168.1.157",
     "stream_port": "30002",
@@ -101,7 +101,7 @@
     "grab_resolution": "HD1200",
     "camera_model": "zedx",
     "enable_person_detection": "false",
-    "camera_name": "front_left_scene_detector_cam",
+    "camera_name": "left_front_scene_detector_cam",
     "depth_mode": "NEURAL",
     "confidence_threshold": "30",
     "enable_positional_tracking": "false",
@@ -112,7 +112,7 @@
     "enable_right": "false",
     "include_right_images_in_sensor_bundle": "false"
   },
-  "place_left": {
+  "left_place": {
     "serial_number": "49682050",
     "stream_address": "192.168.1.157",
     "stream_port": "30004",
@@ -120,7 +120,7 @@
     "grab_resolution": "HD1200",
     "camera_model": "zedx",
     "enable_person_detection": "false",
-    "camera_name": "place_left_detector_cam",
+    "camera_name": "left_place_detector_cam",
     "depth_mode": "NEURAL",
     "confidence_threshold": "30",
     "enable_positional_tracking": "false",
@@ -131,7 +131,7 @@
     "enable_right": "false",
     "include_right_images_in_sensor_bundle": "false"
   },
-  "person_scene_left": {
+  "left_person_scene": {
     "serial_number": "45552704",
     "stream_address": "192.168.1.157",
     "stream_port": "30006",
@@ -139,7 +139,7 @@
     "grab_resolution": "HD1200",
     "camera_model": "zedx",
     "enable_person_detection": "false",
-    "camera_name": "person_scene_left_detector_cam",
+    "camera_name": "left_person_scene_detector_cam",
     "depth_mode": "NEURAL",
     "confidence_threshold": "30",
     "enable_positional_tracking": "false",
