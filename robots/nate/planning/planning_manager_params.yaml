@@ -1,0 +1,160 @@
+/**:
+  ros__parameters:
+    ## Tracker-gap related params.
+    # The classes of objects that indicate a tracker gap, split by which acceptance window past
+    # the last panel they are matched against.
+    near_window_tracker_gap_objects: ["purlin-curved-tracker-gap"]
+    far_window_tracker_gap_objects: ["purlin"]
+    tracker_gap_tolerance_m: 0.11
+    # width_offset_with_tracker_gap_m is site-specific, in config/params/tracker_gap.yaml.
+
+    # Whether to log processed trajectories to CSV files.
+    log_processed_trajectories: False
+
+planning_manager_node:
+  ros__parameters:
+    env_name: tesseract_env
+    object_poses_topic: object_pose_estimates
+    system_state_topic: system_state
+    planner_debug_topic: planner_debug
+    logged_planner_debug_topic: logged_planner_debug
+    planner_state_topic: planner_state
+    execution_state_topic: execution_state
+    execution_debug_topic: execution_debug
+
+    # Topic carrying the RViz marker showing where the panel will be placed this install cycle.
+    place_pose_marker_topic: place_pose_marker
+    planner_timer_period_ms: 100
+    # install_dir_in_base_frame is single-sourced from the shared config package
+    # (config/params/install_direction.yaml), appended in the launch file.
+    are_fixed_panels_on_left: False
+    light_and_sound_request: /light_and_sound_request
+    hazard_detection_topic: /hazard_detection
+    pause_on_vulnerable_actor_detection: True
+
+    # Topic on which keyence_io publishes sensor-confirmed gripper state; subscribed to by the
+    # trajectory executor to guard against moving the arm while it may still be holding a panel.
+    gripper_state_topic: /gripper_state
+
+    # Age (s) beyond which the cached gripper state is treated as unknown (e.g. keyence_io died).
+    gripper_state_staleness_timeout_s: 1.0
+
+    # Hold (s) before PLACE_DONE. Needed on Nigiri to reliably retract on place (5 cm, 3500 uA).
+    # 3 of 5 retracts came after blowoff, 2 still holding the panel: load cell data likely lags.
+    place_done_delay_s: 0.3
+
+    # Whether the trajectory executor replaces a plan whose waypoints all lie within a relative
+    # tolerance (Eigen isApprox, 1e-3) of the start with a single point at the start, skipping it.
+    # That tolerance scales with the joint vector norm, so it also skips real moves of ~2 mm at the
+    # gripper. Set False to execute such millimetre moves; a plan that truly goes nowhere (repeats
+    # within 1e-6 rad) still produces no motion.
+    drop_trivial_trajectories: True
+
+    # How long (s) to wait at startup for a confirmed gripper state before deciding whether the
+    # initial homing move is safe.
+    gripper_state_startup_wait_timeout_s: 5.0
+
+    # Keep a simulated robot at the pose established by its environment instead of moving to the
+    # pick data acquisition pose when the planning manager starts.
+    skip_startup_homing_in_sim: False
+
+    # Whether the arm homes at startup, in simulation and on hardware. Disable it to start with the
+    # arm where it is, e.g. holding a panel at a place data collection goal.
+    enable_startup_homing: True
+
+    # Whether to perform an override retract when the limit switches trigger.
+    # When true, the robot plans and executes a retract before erroring out.
+    # When false, the retract is skipped and the planner fails immediately (ERROR).
+    # NOTE: Disabling this is intended for testing only; production should keep it True.
+    enable_override_retract: True
+
+    # Offset in the base-frame z direction when picking a panel during uninstall.
+    uninstall_pick_offset_z_m: -0.035
+
+    # The predicted next panel frame.
+    predicted_next_panel_frame: predicted_next_panel
+
+    # Service names.
+    pick_place_service: pick_place_request
+    sim_pick_place_service: sim_pick_place_request
+    panel_flip_service: panel_flip_request
+    arm_stow_service: stow_request
+    place_data_collection_setup_service: place_data_collection_setup
+    place_data_collection_move_service: place_data_collection_move
+
+    ## Place-trajectory data collection params. Only used by the place data collection services.
+    # Names given to the objects the data collection scene is built from.
+    place_data_collection_panel_object_name: place_data_collection_panel
+    place_data_collection_ground_plane_object_name: place_data_collection_ground_plane
+
+    # Dimensions (x, y, z) of the planar static obstacle standing in for the surface the panel is
+    # placed onto. It is a small thin pad centred under the panel, not a floor: it only has to be
+    # wide enough for the descending panel to run into it, and keeping it well inside the panel's
+    # own footprint is what stops it reaching the robot's links and causing collisions that have
+    # nothing to do with the placed panel.
+    place_data_collection_ground_plane_dims_m: [0.8, 0.8, 0.05]
+
+    # Gap left between the plane's top face and the lowest corner of the panel at the goal pose.
+    place_data_collection_ground_plane_clearance_m: 0.01
+
+    # Purlins estimated under the gaps beside the held panel's long edges, sized from the selected
+    # purlin model. Each is named with this prefix and a side index, its top this gap below the panel.
+    place_data_collection_purlin_object_name: place_data_collection_purlin
+    place_data_collection_purlin_clearance_m: 0.005
+
+    # Allowable tolerance in X, Y, and Z from the next panel pose predicted by DRS.
+    drs_place_tolerance_m: 0.15
+
+    # Should a button be used to indicate tracker gaps?
+    use_button_for_tracker_gap: False
+
+    # Should DRS be used for place pose validation?
+    use_drs_for_place_validation: True
+
+    # Service to add a box object to the environment.
+    create_box_object_service: /create_box_object
+
+    # Service to clear the planning environment.
+    clear_environment_service: /clear_planning_environment
+
+    # Object class to use as the reference when determining the place pose.
+    place_pose_reference_object_class: panel-solar
+
+    # Maximum SE3 translation distance (m) between the proposed panel place pose and the expected
+    # place pose computed from the nearest purlin's reference offset. Place poses further than this
+    # threshold from all purlins are rejected.
+    purlin_place_distance_threshold_m: 0.05
+
+    # Whether to validate that the place pose is within SE3 tolerance of a purlin's expected
+    # place pose. When false, the check is skipped entirely.
+    enable_purlin_place_validation: false
+
+    # Whether to reverse pick and place semantics. When true, the reference (last fixed) panel is
+    # picked and placed "over" the original pick-region panel (displaced by one panel thickness
+    # along the panel's X axis) instead of picking the pick-region panel and placing it beside the
+    # reference panel.
+    reverse_pick_and_place: false
+
+    # Z offset (in the original pick panel frame) applied to the reverse place pose, in addition to
+    # the X displacement. Only used when reverse_pick_and_place is true.
+    reverse_place_z_offset_in_panel_frame_m: 0.05
+
+    # Y offset (in the original pick panel frame) applied to the reverse place pose, in addition to
+    # the X displacement. Only used when reverse_pick_and_place is true.
+    reverse_place_y_offset_in_panel_frame_m: -0.05
+
+    # Additional standoff (beyond one panel thickness) applied to the reverse place pose along the
+    # original pick panel's -X axis. Only used when reverse_pick_and_place is true.
+    reverse_place_additional_x_offset_in_panel_frame_m: 0.05
+
+    ## Ramp the pallet's panels rest on, modelled as a thin collision box attached to the URDF
+    ## pallet link. Only created on machines whose URDF models the pallet.
+    # Signed distance from the pick panel's center to the ramp's hinged near edge, along the URDF
+    # pallet frame's y (panel stacking) axis. Positive values move the ramp away from the robot.
+    ramp_distance_from_pick_panel_m: 0.75
+    # Tilt of the ramp above the URDF pallet's inclined surface, about its hinged near edge. Zero
+    # leaves the ramp flush with that surface; positive values raise the end away from the robot.
+    ramp_tilt_rad: 0.2
+    # Width of the ramp, along the URDF pallet frame's x axis. Matches the width of the pallet in
+    # the URDF.
+    ramp_width_m: 2.4
