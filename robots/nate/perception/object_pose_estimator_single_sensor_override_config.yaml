@@ -1,0 +1,11 @@
+/**:
+  ros__parameters:
+    sensors_for_pose_estimation: ["pick_detector_cam"]
+    # One camera serves both pick and place here, and install-direction filtering
+    # must stay on, so no sensor is ignored.
+
+    # TODO(vvanirudh): distinguish pick from place, so the filter can be disabled
+    # for pick while still applying to place.
+    install_direction_filter_ignore_sensors: [""]
+    # XY rectangle fitting without edge rewards (edge reward hacks removed, mask IoU handles truncation instead)
+    rectangle_fitting_configs_json: '{"pick_detector_cam": 2}'

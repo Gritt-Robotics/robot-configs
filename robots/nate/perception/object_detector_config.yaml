@@ -1,0 +1,78 @@
+/**:
+  ros__parameters:
+    object_detections_topic: "/object_detections"
+    sensor_bundle_topic: "/sensor_bundle"
+
+    # Model configuration
+    # Supported model types: "foundry", "rfdetr"
+    model_type: "foundry"
+    # Blessed model version, resolved against the foundry package share dir.
+    # Moves on every bump — change it only via foundry's scripts/bump_model.sh.
+    model_path: "models/rfdetr/v16s.pt"
+    model_device: "cuda" # "cuda" or "cpu"
+    model_optimize_for_inference: true
+    # Maximum predictions per image. Must match the num_select the embedded
+    # thresholds were tuned at; a model embedding its own overrides this.
+    model_num_select: 60
+    model_mask_threshold: 0.0 # Threshold for mask binarization
+
+    # For an RFDETR model instead, set model_type: "rfdetr" and point model_path at
+    # its weights; the path resolves through get_resource_path either way.
+
+    # Per-class score thresholds are embedded in the model metadata; override
+    # individual ones with a JSON dict, e.g. '{"panel-solar": 0.7}'.
+    # Classes with no GT in the eval split embed 0.0, which would publish every query.
+    score_threshold_overrides: '{"long-purlin": 0.5, "panel-box": 0.5}'
+
+    # Per-attribute overrides (mirror of score_threshold_overrides); flipped=0.1
+    # vs the embedded ~0.50, below which panel-flipped recall collapses.
+    attribute_score_threshold_overrides: '{"flipped": 0.1}'
+
+    # Requires model to have a "flipped" attribute in its metadata. Whether a detection
+    # stops installs is set by the pose estimator's decision_attribute_modes_json.
+    detect_flipped_panels: true
+    # TODO(flipped-heuristic): these feed the connector-overlap heuristic, which is
+    # no longer wired in now the model predicts the flipped attribute itself.
+    connector_solar_panel_bbox_overlap_threshold: 0.9
+    min_connectors_for_flipped_panel: 2
+
+    # Classes absent from this list publish no mask and draw nothing, unless they
+    # also appear in publish_bbox_classes, which still shows a box and label.
+    publish_mask_classes:
+      [
+        "panel-solar",
+        "purlin",
+        "long-purlin",
+        "flipped",
+        "person",
+        "tracker",
+        "purlin-curved-tracker-gap",
+        "long-purlin"
+      ]
+
+    # Set the following parameter to specify which classes to show bounding boxes for in visualization
+    publish_bbox_classes:
+      [
+        "panel-solar",
+        "purlin",
+        "long-purlin",
+        "flipped",
+        "person",
+        "tracker",
+        "purlin-curved-tracker-gap",
+        "long-purlin"
+      ]
+
+    # A quoted JSON object mapping sensor names to class-name filters. An omitted
+    # sensor key means no filtering for it, so '{}' disables filtering entirely.
+    # Scene cameras feed only distance-based person hazard, so they keep person alone.
+    filter_only_class_json: '{"pick_detector_cam": ["panel-solar", "flipped"], "person_scene_detector_cam": ["person"], "front_scene_detector_cam": ["person"]}'
+    visualize_annotated_images: True
+    # Downscale factor applied to annotated images. Annotation happens at this
+    # resolution, so it also bounds annotation cost; 1.0 publishes unscaled.
+    annotated_image_scale: 0.5
+    is_benchmark: False
+    # Annotated detection images are published per-sensor on
+    # "/<color_image_frame_id>_detections".
+    use_profiler: True
+    # Oracle debug comparator params live in oracle_comparator_config.yaml.

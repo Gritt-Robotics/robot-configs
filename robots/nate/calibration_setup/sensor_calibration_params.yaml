@@ -1,0 +1,51 @@
+# Wildcard-keyed so every tool that has to agree on these thresholds can load this one file. The
+# manual waypoint recorder reads it too, which is what guarantees a sample it accepts is a sample
+# the calibration run can use.
+/**:
+  ros__parameters:
+      # 0: Full calibration, 1: Camera calibration,
+      # 2: Lidar calibration, 3: Full validation,
+      # 4: Camera validation, 5: Lidar validation
+      task_type: 0
+      robot_frame: "base_link"
+      ee_frame: "gripper_frame_1"
+      target_frame: "calibration_target"
+      detections_image_topic: "/target_detections"
+      detections_cloud_topic: "/detected_lidar_target"
+      marker_cloud_topic: "/detected_lidar_marker"
+      joint_state_topic: "/logged_joint_states"
+      calibration_debug_topic: "/calibration_debug"
+      calibration_result_topic: "/calibration_result"
+      planner_service: "/pick_place_request"
+      commit_calibration_service: "/commit_calibration"
+      target_min_intensity: 120.0
+      target_max_intensity: 255.0
+      plane_distance_threshold_m: 0.005
+      axis_distance_threshold_m: 0.005
+      axes_intersection_distance_threshold_m: 0.0001
+      min_pointcloud_delay_s: 3.0
+      max_pointcloud_delay_s: 10.0
+      min_target_points: 2000
+      target_rectangle_thickness_m: 0.02
+      validation_data_size: 10
+      target_box_scale_factor: 1.5
+      min_marker_inliers: 500
+      # Whether the board's discs are detected and solved for at all. The disc params below
+      # only tune that solve; this is what turns it on.
+      use_disc_calibration: false
+      # Returns strictly brighter than this are disc candidates; the discs are retroreflective.
+      disc_min_intensity: 100.0
+      # Candidates at least this far off the fitted board plane are not on the board.
+      disc_max_plane_distance_m: 0.04
+      # In-plane gap that joins two candidates into one cluster; far below the 0.19 m disc spacing.
+      disc_cluster_link_distance_m: 0.015
+      # Clusters with fewer returns than this are too sparse to locate a disc centre.
+      disc_min_cluster_returns: 20
+      # Largest in-plane cluster diagonal kept; under the 0.19 m disc spacing, so a merged pair
+      # or a run of border tape is rejected.
+      disc_max_cluster_extent_m: 0.14
+      # Fewest discs a layout match may rest on; three is the bare minimum. Where the discs are
+      # is a property of the board, so it lives in that robot's marker description instead.
+      disc_min_matched_discs: 5
+      # Largest accepted RMS residual of the layout fit; a clean view fits to a few millimetres.
+      disc_max_match_residual_m: 0.012

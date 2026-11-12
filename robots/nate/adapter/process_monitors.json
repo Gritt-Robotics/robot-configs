@@ -1,0 +1,92 @@
+{
+    "sensors": [
+        {
+            "type": "periodic",
+            "topic_name": "/sensor_readings",
+            "period_s": 5.0
+        },
+        {
+            "type": "sensor_bundle_heartbeat",
+            "topic_name": "/sensor_bundle_heartbeat",
+            "period_s": 2.0,
+            "sensor_names": [
+                "pick_zed",
+                "place_zed",
+                "front_zed",
+                "right_front_zed",
+                "person_zed",
+                "pick_lidar",
+                "place_lidar",
+                "high_freq_lidar"
+            ]
+        }
+    ],
+    "planning": [
+        {
+            "type": "periodic",
+            "topic_name": "/planner_state",
+            "period_s": 5.0
+        },
+        {
+            "type": "state",
+            "topic_name": "/system_state",
+            "state_field": "system_state",
+            "failure_state_value": 5
+        },
+        {
+            "type": "state",
+            "topic_name": "/monitor/robot_arm_controller_status",
+            "state_field": "controller_error_status",
+            "failure_state_value": true
+        }
+    ],
+    "drs": [
+        {
+            "type": "periodic",
+            "topic_name": "/drs_debug",
+            "period_s": 5.0
+        }
+    ],
+    "execution": [
+        {
+            "type": "periodic",
+            "topic_name": "/execution_state",
+            "period_s": 5.0
+        }
+    ],
+    "object_detector": [
+        {
+            "type": "periodic",
+            "topic_name": "/object_detections",
+            "period_s": 5.0
+        }
+    ],
+    "pose_estimation": [
+        {
+            "type": "periodic",
+            "topic_name": "/pose_estimator_heartbeat",
+            "period_s": 5.0
+        }
+    ],
+    "front_person_detection": [
+        {
+            "type": "periodic",
+            "topic_name": "/image_with_person_annotations_0",
+            "period_s": 5.0
+        }
+    ],
+    "keyence_io": [
+        {
+            "type": "peripheral_heartbeat",
+            "topic_name": "/peripheral_heartbeat",
+            "period_s": 2.0,
+            "component_names": [
+                "vacuum_system",
+                "compressor",
+                "gripper_control",
+                "safety_sensor",
+                "led_strip"
+            ]
+        }
+    ]
+}
