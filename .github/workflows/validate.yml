@@ -4,8 +4,90 @@ on:
   pull_request:
 
 jobs:
-  validate:
-    name: Affected robots valid against their releases
+  route:
+    name: Route affected robots
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 5
+    outputs:
+      checkout: ${{ steps.route.outputs.checkout }}
+      release: ${{ steps.route.outputs.release }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Test the CI helpers
+        run: python3 -m unittest discover -s ci
+
+      - name: Find which kinds of robot are affected
+        id: route
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          groups="$(python3 ci/affected_robots.py --base "$BASE_SHA" --by-release)"
+          echo "$groups"
+          has_checkout=false
+          has_release=false
+          while read -r release _; do
+            case "$release" in
+              "") ;;
+              checkout) has_checkout=true ;;
+              *) has_release=true ;;
+            esac
+          done <<< "$groups"
+          echo "checkout=$has_checkout" >> "$GITHUB_OUTPUT"
+          echo "release=$has_release" >> "$GITHUB_OUTPUT"
+
+  checkout-robots:
+    name: Robots on their own checkout, against gritt's config package
+    needs: route
+    if: needs.route.outputs.checkout == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # gritt is private: GRITT_READ_TOKEN is a fine-grained token that reads its contents.
+      - uses: actions/checkout@v4
+        with:
+          repository: Gritt-Robotics/gritt
+          ref: ${{ vars.GRITT_REF || 'main' }}
+          token: ${{ secrets.GRITT_READ_TOKEN }}
+          path: .gritt
+          sparse-checkout: |
+            ros2_ws/src/config/config
+            docker/requirements.txt
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install the validator's dependencies, at gritt's pins
+        run: |
+          pins=()
+          for package in pydantic pydantic-core annotated-types typing-extensions \
+              typing-inspection pyyaml; do
+            pins+=("$(grep -iE "^${package}==" .gritt/docker/requirements.txt)")
+          done
+          python3 -m pip install --quiet "${pins[@]}"
+
+      - name: Validate each affected robot
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: ci/validate_affected.sh "$BASE_SHA" checkout .gritt
+
+  release-robots:
+    name: Robots on a release, in its image
+    needs: route
+    if: needs.route.outputs.release == 'true'
     runs-on: self-hosted
     permissions:
       contents: read
@@ -27,9 +109,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Test the CI helpers
-        run: python3 -m unittest discover -s ci
-
       - name: Log in to Artifact Registry
         run: |
           CRED="${GRITT_GCS_CRED_DIR:-$HOME/.config/gritt/gcs}/adc.json"
@@ -39,4 +118,4 @@ jobs:
       - name: Validate each affected robot in its release image
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
-        run: ci/validate_affected.sh "$BASE_SHA"
+        run: ci/validate_affected.sh "$BASE_SHA" release
