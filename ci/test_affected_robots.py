@@ -2,7 +2,12 @@
 
 import unittest
 
-from affected_robots import AssignmentError, affected_robots, parse_assignment
+from affected_robots import (
+    CHECKOUT,
+    AssignmentError,
+    affected_robots,
+    parse_assignment,
+)
 
 FLEET = "northwest"
 OTHER_FLEET = "southeast"
@@ -29,9 +34,13 @@ class ParseAssignmentTest(unittest.TestCase):
 
         self.assertEqual(parse_assignment(NACHO, text), (FLEET, RELEASE))
 
+    def test_a_robot_without_a_release_runs_its_checkout(self):
+        self.assertEqual(parse_assignment(NACHO, f"fleet: {FLEET}\n"), (FLEET, CHECKOUT))
+
     def test_rejects_a_release_that_is_not_a_tag(self):
-        with self.assertRaises(AssignmentError):
-            parse_assignment(NACHO, f"fleet: {FLEET}\nrelease: latest\n")
+        for release in ("latest", "", CHECKOUT):
+            with self.subTest(release=release), self.assertRaises(AssignmentError):
+                parse_assignment(NACHO, f"fleet: {FLEET}\nrelease: {release}\n")
 
     def test_rejects_a_missing_fleet(self):
         with self.assertRaises(AssignmentError):

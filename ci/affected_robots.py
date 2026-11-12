@@ -3,8 +3,9 @@ List the robots a range of commits affects, with the release each is assigned.
 
 A robot is affected when its robot tree or its assignment changed, when the fleet it is
 assigned to changed, or when CI or checkout settings changed. Robots with no assignment at the
-head commit are left out. The release image's validator checks assignments in full; this reads
-only the two fields CI routes on.
+head commit are left out. The validator checks assignments in full; this reads only the two
+fields CI routes on. A robot whose assignment names no release runs a dev container on its own
+gritt checkout, and is listed with the release `checkout`.
 
 Usage (from the repo root):
     python3 ci/affected_robots.py (--base <commit> | --all) [--head <commit>] [--by-release]
@@ -27,6 +28,8 @@ FLEET_KEY = "fleet"
 RELEASE_KEY = "release"
 NAME_PATTERN = re.compile(r"^[a-z0-9_]+$")
 RELEASE_PATTERN = re.compile(r"^v[0-9]+\.[0-9]+\.[0-9]+$")
+# Stands in for the release of a robot that runs its own gritt checkout; never a vX.Y.Z tag.
+CHECKOUT = "checkout"
 QUOTES = "\"'"
 
 
@@ -43,10 +46,10 @@ def parse_assignment(robot: str, text: str) -> tuple[str, str]:
         text (str): The assignment file's contents.
 
     Returns:
-        tuple[str, str]: The robot's fleet and release tag.
+        tuple[str, str]: The robot's fleet, and its release tag or CHECKOUT if it names none.
 
     Raises:
-        AssignmentError: If the fleet or release is missing, repeated or malformed.
+        AssignmentError: If the fleet is missing, or either is repeated or malformed.
     """
     values = {}
     for line in text.splitlines():
@@ -59,9 +62,11 @@ def parse_assignment(robot: str, text: str) -> tuple[str, str]:
             raise AssignmentError(f"{robot}: unexpected line {line!r}")
         values[key] = value.strip().strip(QUOTES)
     fleet = values.get(FLEET_KEY, "")
-    release = values.get(RELEASE_KEY, "")
     if NAME_PATTERN.fullmatch(fleet) is None:
         raise AssignmentError(f"{robot}: fleet {fleet!r} is not a fleet name")
+    if RELEASE_KEY not in values:
+        return fleet, CHECKOUT
+    release = values[RELEASE_KEY]
     if RELEASE_PATTERN.fullmatch(release) is None:
         raise AssignmentError(f"{robot}: release {release!r} is not a vX.Y.Z tag")
     return fleet, release
