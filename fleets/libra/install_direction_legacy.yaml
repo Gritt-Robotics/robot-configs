@@ -1,0 +1,5 @@
+# Install direction for legacy machines. Non-legacy machines install along a different
+# heading and load install_direction.yaml instead.
+/**:
+  ros__parameters:
+    install_dir_in_base_frame: [1.0, 0.0, 0.0] # Install direction in base frame [x, y, z]

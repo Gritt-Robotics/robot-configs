@@ -1,0 +1,7 @@
+/**:
+  ros__parameters:
+    panel_model: waree_elite_rseries_ntype
+    purlin_model: square_scaled_down_rivets
+    purlin_tracker_gap_model: circular
+    long_purlin_model: ati_long_1400mm
+    bha_panel_model: pvh
