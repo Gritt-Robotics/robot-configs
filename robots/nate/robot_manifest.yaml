@@ -1,0 +1,28 @@
+robot_arms:
+  bx135x:
+    moveit_config_package: bx135x_moveit_config
+    controller: ros2_control
+    known_states_file: known_robot_states_bx135x.yaml
+    service_names_file: service_names_bx135x.yaml
+    exec_params_file: exec_params_bx135x.yaml
+    exec_params_slow_file: exec_params_bx135x_slow.yaml
+    planning_params_file: planning_params_bx135x.yaml
+system_types:
+  module_installer_unifork:
+    arm_slots:
+    - main
+    legacy: false
+    unifork: true
+    lidar_config: lidar_config.json
+    artifacts:
+    - sensor_calibration
+    - calibration_launch
+    - zed_config
+    - adapter
+    - drs_reachability
+    - planner_offsets
+systems:
+  nate:
+    type: module_installer_unifork
+    arms:
+      main: bx135x

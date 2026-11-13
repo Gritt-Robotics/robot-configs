@@ -30,7 +30,13 @@ planning_manager_node:
         safety_margin: 0.02
         safety_margin_buffer: 0.02
         coeff: 500.0
-    
+
+    data_collection_trajopt_composite_profile:
+      # Overrides of `trajopt_composite_profile` for the place data collection moves only.
+      collision_cost_config:
+        safety_margin: 0.002
+        safety_margin_buffer: 0.002
+
     trajopt_solver_profile:
       # Params for the `TrajOptDefaultSolverProfile`
       max_iter: 200

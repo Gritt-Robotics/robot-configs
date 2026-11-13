@@ -1,0 +1,91 @@
+/**:
+  ros__parameters:
+    # Planner services this node drives. They must match the planning_manager_node params of the
+    # same names.
+    setup_service: /place_data_collection_setup
+    move_service: /place_data_collection_move
+    # The planner node whose staged parameters (URDF/SRDF, panel model, pad, speeds) a run needs.
+    planner_node_name: /planning_manager_node
+
+    # Services this node offers. The first fixes the goal pose, the second runs the episodes.
+    set_goal_pose_service: set_goal_pose
+    run_episodes_service: run_episodes
+
+    # Topic carrying the episode boundary annotations that bracket each recorded trajectory.
+    episode_event_topic: place_data_collection_episode
+
+    # Number of episodes a single run_episodes request performs.
+    num_episodes: 20
+
+    # Corners of the box the episode's start pose is sampled from, as offsets in metres from the
+    # fixed goal position along the base frame's x, y and z axes. The box is 20 cm on every side
+    # and sits strictly above the goal, so every episode approaches the goal pose from above.
+    sample_box_min_offset_m: [-0.1, -0.1, 0.1]
+    sample_box_max_offset_m: [0.1, 0.1, 0.3]
+
+    # Half-width of the window the episode's start orientation is sampled over, applied
+    # independently about each of the end-effector's own axes. Zero pins every episode to the goal
+    # orientation.
+    sample_orientation_window_deg: 3.0
+
+    # Seed for the sampling. Negative leaves the generator unseeded, so each run differs.
+    random_seed: -1
+
+    # How long to wait on a planner service. A move covers planning plus a full arm motion.
+    planner_service_timeout_s: 120.0
+
+    # Run every move at the slow speed, for operator safety. Otherwise moves run at an install's
+    # place speed.
+    slow_execution: False
+
+    # Pause after reaching the sampled pose, before descending onto the goal, so the rack stops
+    # shaking from the ascent. The pause is not recorded in the episode.
+    pre_descent_settle_s: 2.0
+
+    # Pause with the panel on the goal after a recorded descent, before the next ascent. The pause
+    # is not recorded in the episode.
+    post_descent_settle_s: 2.0
+
+    # Whether fixing the goal pose also engages the gripper. Set false to re-fix the goal pose
+    # partway through a session: an already engaged gripper rejects a second engage command.
+    engage_gripper: True
+
+    # Root directory runs are recorded under; keep it in /data/logs, the host-mounted directory (see
+    # README). robot_name and controller_state_topic come from the launch file.
+    output_dir: /data/logs/place_data_collection
+
+    # Topics recorded into every episode bag.
+    joint_states_topic: /joint_states
+    gripper_state_topic: /gripper_state
+    tf_topic: /tf
+    tf_static_topic: /tf_static
+
+    # Planner service the reference panel is added to the scene through, after setup.
+    create_box_object_service: /create_box_object
+
+    # Which section of the reference poses file locates the held and reference panels: last_install
+    # (extract_last_install, from an install bag) or charuco (record_reference_board). See README.
+    reference_pose_source: last_install
+    # Read at every set_goal_pose; a missing or malformed selected section fails the request.
+    reference_poses_file: /data/logs/place_data_collection/reference_poses.json
+
+    # record_reference_board only: raw board poses from charuco_board_pose_estimator, run with
+    # transform_to_object false, averaged into one centre in the planner's base frame.
+    charuco_board_pose_topic: /charuco_board_pose
+    charuco_board_pose_timeout_s: 10.0
+    num_board_samples: 10
+    base_frame: base_link
+
+    # The board on the reference panel, whose centre is found from these: OpenCV puts the board
+    # pose's origin on a corner. Must match the estimator's squares_x, squares_y and square size
+    # (its board_size_m / max(squares_x, squares_y)). The calib.io 3 x 5 board of 0.19 m squares.
+    charuco_squares_x: 5
+    charuco_squares_y: 3
+    charuco_square_size_m: 0.19
+
+    reference_panel_object_name: place_data_collection_reference_panel
+
+    # Edge-to-edge gap between adjacent installed panels: the planner models a purlin under the gap
+    # beside each long edge of the held panel, and the charuco source checks the board against it.
+    inter_panel_spacing_m: 0.037
+    reference_panel_spacing_tolerance_m: 0.10

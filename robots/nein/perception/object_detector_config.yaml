@@ -8,7 +8,7 @@
     model_type: "foundry"
     # Blessed model version, resolved against the foundry package share dir.
     # Moves on every bump — change it only via foundry's scripts/bump_model.sh.
-    model_path: "models/rfdetr/v16r_batch5.pt"
+    model_path: "models/rfdetr/v16t_batch5.pt"
     model_device: "cuda" # "cuda" or "cpu"
     model_optimize_for_inference: true
     # Maximum predictions per image. Must match the num_select the embedded

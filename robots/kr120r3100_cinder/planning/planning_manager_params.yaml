@@ -43,6 +43,13 @@ planning_manager_node:
     # 3 of 5 retracts came after blowoff, 2 still holding the panel: load cell data likely lags.
     place_done_delay_s: 0.3
 
+    # Whether the trajectory executor replaces a plan whose waypoints all lie within a relative
+    # tolerance (Eigen isApprox, 1e-3) of the start with a single point at the start, skipping it.
+    # That tolerance scales with the joint vector norm, so it also skips real moves of ~2 mm at the
+    # gripper. Set False to execute such millimetre moves; a plan that truly goes nowhere (repeats
+    # within 1e-6 rad) still produces no motion.
+    drop_trivial_trajectories: True
+
     # How long (s) to wait at startup for a confirmed gripper state before deciding whether the
     # initial homing move is safe.
     gripper_state_startup_wait_timeout_s: 5.0
